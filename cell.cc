@@ -8,6 +8,7 @@ Piece* Cell::getPiece() {
 }
 
 void Cell::putPiece(Piece* piece) {
+  takeoff();
   p = piece;
   p->update(pos, wcanreach, bcanreach);
 }
@@ -16,7 +17,7 @@ Piece* Cell::takeoff() {
  Piece* temp = p;
  p = 0;
  Posn n = {-1, -1};
- temp->update(n, false, false);
+ if (temp) temp->update(n, false, false);
  return temp;
 }
 
