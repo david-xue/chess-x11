@@ -11,13 +11,14 @@ class Piece {
   Posn pos;
   bool isThreatened;
   bool isCovered;
-  
+  virtual int canReach(const Posn) = 0;  
+
 public:
   Piece(ChessBoard*, char, bool);
   virtual ~Piece();
   Piece(ChessBoard*);
   virtual int val() = 0;//return the standard relative value of piece
-  virtual int move(const Posn) = 0;//return 0 if illegal; 1 if legal; 2 if castling; 3 if can be promoted; 4 if en passant
+  int move(const Posn);//return 0 if illegal; 1 if legal; 2 if castling; 3 if can be promoted; 4 if en passant
   virtual char getName();
   bool getOwner();
   Posn getPosn();
