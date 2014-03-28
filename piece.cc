@@ -1,6 +1,9 @@
 #include "piece.h"
 
-Piece::Piece(ChessBoard* b): board(b) {}
+Piece::Piece(ChessBoard* b, char c, bool o): 
+ board(b), name(c), owner(o) {
+ pos.row = pos.col = -1;
+}
 
 char Piece::getName() {
  return name;
@@ -10,11 +13,11 @@ bool Piece::getOwner() {
  return owner;
 }
 
-Posn getPosn() {
+Posn Piece::getPosn() {
  return pos;
 }
 
-void update(const Pons p, bool white, bool black) {
+void Piece::update(const Posn p, bool white, bool black) {
  pos = p;
  isThreatened = owner ? black : white;
  isCovered = owner ? white : black;

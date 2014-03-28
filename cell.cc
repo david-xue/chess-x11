@@ -1,6 +1,8 @@
 #include "cell.h"
 #include "piece.h"
 
+Cell::Cell(Posn p): pos(p) {}
+
 Piece* Cell::getPiece() {
  return p;
 }
@@ -24,7 +26,7 @@ bool Cell::getBlackReach() {
  return bcanreach;
 }
 
-void Cell:update(bool white, bool black) {
+void Cell::update(bool white, bool black) {
  wcanreach = white;
  bcanreach = black;
 }

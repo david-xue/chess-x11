@@ -1,8 +1,8 @@
 #ifndef __CELL_H__
 #define __CELL_H__
+#include "posn.h"
 
 class Piece;
-struct Posn;
 
 class Cell {
   const Posn pos;
@@ -12,7 +12,7 @@ class Cell {
 
  public:
  
-
+  Cell(Posn);
   Piece* getPiece();
   void putPiece(Piece*);
   Piece* takeoff();
