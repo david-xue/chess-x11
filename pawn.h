@@ -5,12 +5,16 @@
 class Pawn: public Piece {
   bool moved;
   Piece* prom;
+ 
+  int isenPassant(const Posn);
 
  public:
-  bool canReach(const Posn);
-  bool move(const Posn);
+  ~Pawn();
+  int move(const Posn);
   int val();
   char getName();
+  void promote(Piece*);
+  void unpromote();
 
 };
 

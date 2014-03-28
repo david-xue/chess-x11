@@ -5,12 +5,11 @@ struct Posn;
 struct Move;
 
 class Display {
-  char board[8][8];
   
  public:
-  void init();
-  void init(const char, const Posn);
-  void notify(const Move, bool undo = false);
+  void init() = 0;
+  void init(const char, const Posn) = 0;
+  void notify(const Move, bool undo = false) = 0;
 
 };
 

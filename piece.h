@@ -7,20 +7,21 @@ class ChessBoard;
 class Piece {
   const char name;
   const bool owner;
-  ChessBoard* board;
+  ChessBoard* const board;
   Posn pos;
   bool isThreatened;
   bool isCovered;
   
 public:
+  virtual ~Piece() = 0;
   Piece(ChessBoard*);
   virtual int val() = 0;//return the standard relative value of piece
-  virtual bool canReach(const Posn) = 0;
-  virtual bool move(const Posn) = 0;
+  virtual int move(const Posn) = 0;//return 0 if illegal; 1 if legal; 2 if castling; 3 if can be promoted; 4 if en passant
   virtual char getName();
-  bool getowner();
+  bool getOwner();
   Posn getPosn();
-  void update(const Posn, bool, bool);//update the status
+ //update the status; the second arg is the new threat status and the last is cover status
+  void update(const Posn, bool, bool);
 
 };
 

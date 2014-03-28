@@ -2,8 +2,8 @@
 #define __POSN_H__
 
 struct Posn {
- char col;
  int row;
+ int col;
 };
 
 #endif

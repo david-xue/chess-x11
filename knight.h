@@ -4,8 +4,7 @@
 
 class Knight: Piece {
  public:
-  bool canReach(const Posn);
-  bool move(const Posn);
+  int canMove(const Posn);
   int val();
 };
 

@@ -2,17 +2,23 @@
 #define __CELL_H__
 
 class Piece;
+struct Posn;
 
 class Cell {
+  const Posn pos;
   Piece* p;
-  bool WhiteThreats;
-  bool BlackThreats;
+  bool wcanreach;
+  bool bcanreach;
 
  public:
+ 
+
   Piece* getPiece();
   void putPiece(Piece*);
-  void takeoff();
-  void updateThreats(bool, bool);
+  Piece* takeoff();
+  void update(bool, bool);
+  bool getWhiteReach();
+  bool getBlackReach();
 
 };
 

@@ -14,8 +14,10 @@ Posn getPosn() {
  return pos;
 }
 
-void update(const Pons p, bool t, bool c) {
+void update(const Pons p, bool white, bool black) {
  pos = p;
- isThreatened = t;
- isCovered = c;
+ isThreatened = owner ? black : white;
+ isCovered = owner ? white : black;
 }
+
+Piece::~Piece() {}
