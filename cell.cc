@@ -15,6 +15,8 @@ void Cell::putPiece(Piece* piece) {
 Piece* Cell::takeoff() {
  Piece* temp = p;
  p = 0;
+ Posn n = {-1, -1};
+ temp->update(n, false, false);
  return temp;
 }
 
