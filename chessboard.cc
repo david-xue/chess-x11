@@ -194,6 +194,3 @@ bool ChessBoard::isWhiteMove() {
 
 
 
-
-
-
