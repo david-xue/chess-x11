@@ -1,32 +1,48 @@
 #include "chessboard.h"
+#include "posn.h"
+#include "move.h"
+#include "cell.h"
+#include "piece.h"
+#include "pawn.h"
 using namespace std;
+
+void ChessBoard::update() {
+ Posn p;
+ for (int n = 0; n < 8; n++) {
+  for (int m = 0; m < 8; m++) {
+   p.row = n;
+   p.col = m;
+   bool w, b;
+   for (int l = 0; l < 16; l++) {
+    if (white[l]->canReach(p)) w = true;
+    if (black[l]->canReach(p)) b = true;
+   }
+   board[n][m]->update(p, w, b);
+  }
+ }
+}
 
 int ChessBoard::move(const Posn orig, const Posn dest) {
   Cell* co = board[orig.row][orig.col];
   Cell* cd = board[dest.row][dest.col];
   Piece* p = co->getPiece();
   if (!p) return 0;
-  if (p.getOwner() && blackmove) return 0;
-  if (!(p.getOwner()) && !blackmove) return 0;
-  int res = p.move();
+  if (p->getOwner() && blackmove) return 0;
+  if (!(p->getOwner()) && !blackmove) return 0;
+  int res = p->move(dest);
   if (res == 0) return 0;
   else {
-   Move m;
-   m.orig = orig;
-   m.dest = dest;
-   m.name = p->getName();
-   Piece* captured = cd.takeoff();
-   c.takeoff();
-   if (captured) m.captured = captured->getName();
-   board[dest.row][dest.col]->putPiece(p);
+   Move m = {p, cd->takeoff(), orig, dest, false, false, 0};
+   co->takeoff();
+   cd->putPiece(p);
    if (res == 2) {
-    if (orig.row < dest.row) {
+    if (orig.col < dest.col) {
      Piece* rook = board[orig.row][7]->takeoff();
-     board[orig.row][orig.col + 1]->putPiece(rook);
+     board[orig.row][5]->putPiece(rook);
     }
-    else {0
+    else {
      Piece* rook = board[orig.row][0]->takeoff();
-     board[orig.row][orig.col - 1]->putPiece(rook);
+     board[orig.row][3]->putPiece(rook);
     }
     m.castling = true;
    }
@@ -35,11 +51,10 @@ int ChessBoard::move(const Posn orig, const Posn dest) {
     cout << "Enter the piece you want." << endl;
     cin >> c;
     //to be continued..
-    m.promotion = c;
+    m.promotion = true;
    }
    if (res == 4) {
-    board[orig.row][dest.col]->takeoff();
-    m.enpassant = true;
+    m.enpassant = board[orig.row][dest.col]->takeoff();
    }
    update();
    blackmove = !blackmove;
@@ -54,5 +69,67 @@ int ChessBoard::move(const Posn orig, const Posn dest) {
    if (stalemate(blackmove)) return 4;
   }
 }
+
+void ChessBoard::undo() {
+ Move m = record->back();
+ Cell* co = board[m.orig.row][m.orig.col];
+ Cell* cd = board[m.dest.row][m.orig.col];
+ cd->putPiece(m.captured);
+ co->putPiece(m.mover);
+ if (m.promotion) {
+  Pawn* pawn = static_cast<Pawn*>(m.mover);
+  pawn->unpromote();
+ }
+ if (m.castling) {
+  if (m.orig.col < m.dest.col) {
+    Piece* rook = board[m.orig.row][5]->takeoff();
+    board[m.orig.row][7]->putPiece(rook);
+  }
+  else {
+   Piece* rook = board[m.orig.row][3]->takeoff();
+   board[m.orig.row][0]->putPiece(rook);
+  }
+ }
+ if (m.enpassant) {
+  board[m.orig.row][m.dest.col]->putPiece(m.enpassant);
+ }
+ update();
+ record->pop_back();
+ blackmove = !blackmove;
+ turn -= 1;
+}
   
-   
+bool ChessBoard::isExposed(const Posn orig, const Posn dest, bool player) {
+ Cell* co = board[orig.row][orig.col];
+ Cell* cd = board[dest.row][dest.col];
+ Piece* p1 = co->takeoff();
+ Piece* p2 = cd->takeoff();
+ cd->putPiece(p1);
+ bool res = false;
+ if (player) {
+  for (int n = 0; n < 16; n++) {
+   if ((black[n]->getPosn()).row != -1) {
+    if (black[n]->canReach(white[0]->getPosn()))
+     res = true;
+   }
+  }
+ }
+ else {
+  for (int n = 0; n < 16; n++) {
+   if ((white[n]->getPosn()).row != -1) {
+    if (white[n]->canReach(black[0]->getPosn()))
+     return true;
+   }
+  }
+ }
+ cd->putPiece(p2);
+ co->putPiece(p1);
+ return res;
+} 
+
+int ChessBoard::isOccupied(const Posn posn, bool player) {
+ Piece* p = board[posn.row][posn.col]->getPiece();
+ if (!p) return 0;
+ else if (p->getOwner() == player) return 1;
+ else return 2;
+}   

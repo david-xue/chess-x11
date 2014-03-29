@@ -1,6 +1,7 @@
 #include "textdisplay.h"
 #include "posn.h"
 #include "move.h"
+#include "piece.h"
 using namespace std;
 
 void TextDisplay::init() {
@@ -33,18 +34,40 @@ void TextDisplay::notify(const Move m, bool undo) {
   int x = m.orig.row;
   int y = m.orig.col;
   board[x][y] = (x + y) % 2 ? ' ' : '_';
-  board[m.dest.row][m.dest.col] = m.name;
+  board[m.dest.row][m.dest.col] = m.mover->getName();
+  if (m.castling) {
+   if (m.orig.col < m.dest.col) {                                                                                                                              
+    board[m.orig.row][5] = m.mover->getOwner() ? 'R' : 'r';
+    board[m.orig.row][7] = m.orig.row == 0 ? '_' : ' ';
+   }                                                                                                                                                       
+   else {
+    board[m.orig.row][3] = m.mover->getOwner() ? 'R' : 'r';
+    board[m.orig.row][0] = m.orig.row == 0 ? ' ' : '_';
+   }   
+  }
+  if (m.enpassant) {
+   int x = m.orig.row;                                                                                                                                    
+   int y = m.dest.col;                                                                                                                                    
+   board[x][y] = (x + y) % 2 ? ' ' : '_'; 
+  } 
  }
  else {
   int x = m.dest.row;
   int y = m.dest.col;
-  if (m.promotion) board[x][y] = m.name;
-  else {
-   board[m.orig.row][m.orig.col] = m.name;
-   if (m.captured) board[x][y] = m.captured;
-   else board[x][y] = (x + y) % 2 ? ' ' : '_';
-   if (m.enpassant) board[m.orig.row][m.dest.col] = m.name == 'p' ? 'P' : 'p';
-  }
+  board[m.orig.row][m.orig.col] = m.mover->getName();
+  if (m.captured) board[x][y] = m.captured->getName();
+  else board[x][y] = (x + y) % 2 ? ' ' : '_';
+  if (m.enpassant) board[m.orig.row][m.dest.col] = m.enpassant->getName();
+  if (m.castling) {
+   if (m.orig.col < m.dest.col) {
+    board[m.orig.row][7] = m.mover->getOwner() ? 'R' : 'r';
+    board[m.orig.row][5] = m.orig.row == 0 ? '_' : ' ';
+   }                                                                                                                                                     
+   else {                                                                                                                                                
+    board[m.orig.row][0] = m.mover->getOwner() ? 'R' : 'r';
+    board[m.orig.row][3] = m.orig.row == 0 ? '_' : ' ';
+   }
+  } 
  }
 }
 

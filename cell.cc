@@ -10,7 +10,7 @@ Piece* Cell::getPiece() {
 void Cell::putPiece(Piece* piece) {
   takeoff();
   p = piece;
-  p->update(pos, wcanreach, bcanreach);
+  if (p) p->update(pos, wcanreach, bcanreach);
 }
 
 Piece* Cell::takeoff() {
@@ -32,5 +32,6 @@ bool Cell::getBlackReach() {
 void Cell::update(bool white, bool black) {
  wcanreach = white;
  bcanreach = black;
+ if (p) p->update(pos, wcanreach, bcanreach);
 }
 

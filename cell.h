@@ -14,8 +14,8 @@ class Cell {
  
   Cell(Posn);
   Piece* getPiece();
-  void putPiece(Piece*);
-  Piece* takeoff();
+  void putPiece(Piece*);//will takeoff the occupying piece
+  Piece* takeoff();//the posn of piece taken off is set (-1, -1)
   void update(bool, bool);
   bool getWhiteReach();
   bool getBlackReach();

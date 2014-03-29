@@ -3,24 +3,25 @@
 #include "move.h"
 #include <cstdlib>
 #include <vector>
+#include "chessboard.h"
 
 Pawn::~Pawn() {
  delete prom;
 }
 
 int Pawn::val() {
- return prom ? prom.val() : 1;
+ return prom ? prom->val() : 1;
 }
 
 char Pawn::getName() {
- return prom ? prom.getName() : name;
+ return prom ? prom->getName() : name;
 }
 
 void Pawn::promote(Piece* p) {
  prom = p;
 } 
 
-int Pawn::move(const Posn posn) {
+int Pawn::canReach(const Posn posn) {
  int o = board->isOccupied(posn, owner);
  if (owner) {
   if (posn.col == pos.col) {
@@ -56,6 +57,10 @@ int Pawn::move(const Posn posn) {
  }
 }
 
+bool operator==(const Posn p1, const Posn p2) {
+ return p1.row == p2.row && p1.col == p2.col;
+}
+
 int Pawn::isenPassant(const Posn posn) {
  Posn p = {pos.row, posn.col};
  Move m = (board->getRecord())->back();
@@ -70,3 +75,4 @@ void Pawn::unpromote() {
  delete prom;
  prom = 0;
 }
+

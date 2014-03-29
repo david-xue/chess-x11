@@ -2,9 +2,9 @@
 #define __KNIGHT_H__
 #include "piece.h"
 
-class Knight: Piece {
+class Knight: public Piece {
+  int canReach(const Posn);
  public:
-  int canMove(const Posn);
   int val();
 };
 

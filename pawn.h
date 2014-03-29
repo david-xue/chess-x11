@@ -7,10 +7,10 @@ class Pawn: public Piece {
   Piece* prom;
  
   int isenPassant(const Posn);
+  int canReach(const Posn);
 
  public:
   ~Pawn();
-  int move(const Posn);
   int val();
   char getName();
   void promote(Piece*);

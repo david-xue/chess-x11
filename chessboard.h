@@ -16,7 +16,7 @@ class ChessBoard {
   Piece* black[16];
   TextDisplay* tp;
   GraphDisplay* gp;
-  vector<Move>* record;//record of moves
+  std::vector<Move>* record;//record of moves
   int turn;//number of turns
   bool blackmove;
   bool alert;//alerting mode
@@ -43,7 +43,7 @@ class ChessBoard {
   int isOccupied(const Posn, bool);
   void undo();
   void setAlert(bool);//set alerting mode; can be set on only when human player vs computer
-  vector<Move>* getRecord();
+  std::vector<Move>* getRecord();
   bool isExposed(const Posn, const Posn, bool); //pieces will call this to determine if their moves get their king exposed
 
  //friend functions for display and AI:
@@ -53,13 +53,13 @@ class ChessBoard {
  //showThreatened displays the threatened pieces
   friend void showThreatened(const Posn, bool);
  //legalMove returns all legal moves of a piece
-  friend vector<Posn> legalMove(const Posn);
+  friend std::vector<Posn> legalMove(const Posn);
  //showlegalMove displays all legal moves of a piece
   friend void showlegalMove(const Posn);
  //safeMove returns all legal moves to cells that is not threatened
-  friend vector<Posn> safeMove(const Posn);
+  friend std::vector<Posn> safeMove(const Posn);
  //howtocap returns the next move needed to capture the piece
-  friend vector<Posn> howtocap(const Posn me, const Posn target);
+  friend std::vector<Posn> howtocap(const Posn me, const Posn target);
 
 };
 
