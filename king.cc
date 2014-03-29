@@ -1,6 +1,6 @@
 #include "posn.h"
 #include "king.h"
-#include <vector>
+//#include <vector>
 #include <cstdlib>
 
 // Does King need its own constructor because of moved? (I think this depends on the compiler)
@@ -58,28 +58,6 @@ bool King::isCastling(const Posn posn) {
     }
 }
                     
-/*
-int King::move(const Posn posn) {
-    if (board->isOccupied(posn, owner) == 1) {
-        return 0;
-    } else if (isCastling(posn)) {
-        moved = true;
-        return 2;
-    } else if (canReach(posn)) {
-        if (board->isExposed(pos, posn, owner)) {
-            if (!moved) {
-                moved = true;
-            }
-            return 1;
-        } else {
-            return 0;
-        }
-    } else {
-        return 0;
-    }
-}
-*/
-
 void King::setMoved(const bool hasMoved) {
     moved = hasMoved;
 }

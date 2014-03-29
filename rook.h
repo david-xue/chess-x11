@@ -3,10 +3,12 @@
 #include "piece.h"
 
 class Rook: public Piece {
- public:
-  bool canReach(const Posn);
-  bool move(const Posn);
-  int val();
+    bool moved;
+    int canReach(const Posn);
+public: 
+    int val();
+    bool hasMoved();
+    bool setMoved(const bool);
 };
 
 #endif
