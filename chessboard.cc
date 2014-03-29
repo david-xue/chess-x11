@@ -184,3 +184,16 @@ bool ChessBoard::isAttacked(const Posn posn, bool opponent) {
 bool ChessBoard::isWhiteMove() {
     return !blackmove;
 }
+
+
+
+//stub implementation to get linker working
+  bool ChessBoard::check(bool) {return false;}//move will call this to determine if the player is being checked
+  bool ChessBoard::checkmate(bool) {return false;}//same as above
+  bool ChessBoard::stalemate(bool) {return false;}//same
+
+
+
+
+
+
