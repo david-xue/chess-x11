@@ -19,7 +19,7 @@ int Bishop::canReach(const Posn posn) {
     } else if ((rowDist > 0) && (colDist < 0)) {
         direction.row = 1;
         direction.col = -1;
-    } else if ((rowDist == 0) && (colDist < 0)) {
+    } else if ((rowDist < 0) && (colDist < 0)) {
         direction.row = -1;
         direction.col = -1;
     } else {
