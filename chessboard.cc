@@ -32,20 +32,34 @@ int ChessBoard::move(const Posn orig, const Posn dest) {
   int res = p->move(dest);
   if (res == 0) return 0;
   else {
-   Move m = {p, cd->takeoff(), orig, dest, false, false, 0};
+    Move m = {p, cd->takeoff(), orig, dest, false, false, 0};
    co->takeoff();
    cd->putPiece(p);
-   if (res == 2) {
-    if (orig.col < dest.col) {
-     Piece* rook = board[orig.row][7]->takeoff();
-     board[orig.row][5]->putPiece(rook);
+  if (res == 2) {
+        // for castling, King would've checked all conditions except for rook's part  
+        Piece * rook;
+        // I'll clean up these ridiculous conditions later...
+      if (orig.col < dest.col) {
+          rook = board[orig.row][7]->getPiece();
+          if ((isExposed(Posn(orig.row, 7), Posn(orig.row, 5), rook->getOwner())) || rook->hasMoved() || (rook->getOwner() != p->getOwner())) {
+                cd->takeoff();
+                co->putPiece(p);
+                return 0;
+            } 
+            rook = board[orig.row][7]->takeoff();
+            board[orig.row][5]->putPiece(rook);
+        } else { 
+            rook = board[orig.row][0]->getPiece();
+          if ((isExposed(Posn(orig.row, 0), Posn(orig.row, 3), rook->getOwner())) || rook->hasMoved() || (rook->getOwner() != p->getOwner())) {
+                cd->takeoff();
+                co->putPiece(p);
+                return 0;
+            } 
+            rook = board[orig.row][0]->takeoff();
+            board[orig.row][3]->putPiece(rook);
+        }
+        m.castling = true;
     }
-    else {
-     Piece* rook = board[orig.row][0]->takeoff();
-     board[orig.row][3]->putPiece(rook);
-    }
-    m.castling = true;
-   }
    if (res == 3) {
     char c;
     cout << "Enter the piece you want." << endl;
@@ -132,4 +146,14 @@ int ChessBoard::isOccupied(const Posn posn, bool player) {
  if (!p) return 0;
  else if (p->getOwner() == player) return 1;
  else return 2;
-}   
+}
+
+
+bool ChessBoard::isAttacked(const Posn posn, bool opponent) {
+    if (opponent) {
+        return board[posn.row][posn.col]->getWhiteReach();
+    } else {
+        return board[posn.row][posn.col]->getBlackReach();
+    }
+}
+

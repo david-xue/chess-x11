@@ -20,7 +20,7 @@ char Pawn::getName() {
 void Pawn::promote(Piece* p) {
  prom = p;
 } 
-
+ 
 int Pawn::canReach(const Posn posn) {
  int o = board->isOccupied(posn, owner);
  if (owner) {

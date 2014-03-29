@@ -4,9 +4,11 @@
 
 class King: public Piece {
   bool moved;
+  bool isCastling(const Posn);
  public:
+  King(ChessBoard*, char, bool);
   bool canReach(const Posn);
-  bool move(const Posn);
+  int move(const Posn);
   int val(); 
 };
 
