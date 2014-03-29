@@ -44,6 +44,7 @@ int ChessBoard::move(const Posn orig, const Posn dest) {
           if ((isExposed(Posn(orig.row, 7), Posn(orig.row, 5), rook->getOwner())) || rook->hasMoved() || (rook->getOwner() != p->getOwner())) {
                 cd->takeoff();
                 co->putPiece(p);
+                p->setMoved(false);
                 return 0;
             } 
             rook = board[orig.row][7]->takeoff();
@@ -53,12 +54,14 @@ int ChessBoard::move(const Posn orig, const Posn dest) {
           if ((isExposed(Posn(orig.row, 0), Posn(orig.row, 3), rook->getOwner())) || rook->hasMoved() || (rook->getOwner() != p->getOwner())) {
                 cd->takeoff();
                 co->putPiece(p);
+                p->setMoved(false);
                 return 0;
             } 
             rook = board[orig.row][0]->takeoff();
             board[orig.row][3]->putPiece(rook);
         }
         m.castling = true;
+        rook->setMoved(true);
     }
    if (res == 3) {
     char c;

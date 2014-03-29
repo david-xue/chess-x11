@@ -9,7 +9,8 @@ class King: public Piece {
   King(ChessBoard*, char, bool);
   bool canReach(const Posn);
   int move(const Posn);
-  int val(); 
+  int val();
+  void setMoved(const bool);
 };
 
 #endif

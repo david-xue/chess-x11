@@ -14,13 +14,19 @@ int King::val() {
     return 10000;
 }
  
-bool King::canReach(const Posn posn) {
+int King::canReach(const Posn posn) {
     int rowDist = abs(posn.row - pos.row);
     int colDist = abs(posn.col - pos.col);
     if (((rowDist == 0) && (colDist == 1)) || ((rowDist == 1) && (colDist == 0))) {
-        return true;
+        moved = true;
+        return 1;
     } else {
-        return false;
+        if (isCastling(posn)) {
+            moved = true;
+            return 2;
+        else {
+            return 0;
+        }
     }
 }
 
@@ -37,34 +43,43 @@ bool King::isCastling(const Posn posn) {
                 if ((board->isOccupied(posn, tempP, owner) != 0) && (board->isAttacked(tempP, !owner))) return false;
                 tempP.col = 1;
                 if (board->isOccupied(posn, tempP, owner) != 0) return false;
-                if (board->isAttacked(pos, !owner)) {
-                    return false;
-                } else {
-                    return true;
-                }
             } else (posn.col == 6) {
                 tempP.col = 5;
                 if ((board->isOccupied(posn, tempP, owner) != 0) && (board->isAttacked(tempP, !owner))) return false;
-                if (board->isAttacked(pos, !owner)) {
-                    return false;
-                } else {
-                    return true;
-                }
             }
+            if (board->isAttacked(pos, !owner)) {
+                return false;
+            } else {
+                return true;
+            }
+
     } else {
         return false;
     }
 }
                     
-
+/*
 int King::move(const Posn posn) {
     if (board->isOccupied(posn, owner) == 1) {
         return 0;
     } else if (isCastling(posn)) {
+        moved = true;
         return 2;
     } else if (canReach(posn)) {
-        return board->isExposed(pos, posn, owner);
+        if (board->isExposed(pos, posn, owner)) {
+            if (!moved) {
+                moved = true;
+            }
+            return 1;
+        } else {
+            return 0;
+        }
     } else {
         return 0;
     }
+}
+*/
+
+void King::setMoved(const bool hasMoved) {
+    moved = hasMoved;
 }
