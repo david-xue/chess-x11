@@ -1,34 +1,15 @@
 #include "game.h"
 #include "chessboard.h"
 #include "player.h"
+#include "human.h"
+#include "computer.h"
 //#include "display.h"
 #include <sstream>
 #include <string>
 
-/*
-class Game {
-  ChessBoard* board;
-  Player* white;
-  Player* black;
-  int whitescore;
-  int blackscore;
-
-  void displayScore();
-  void saveRecord();
-  void resign(bool);
-
- public:
-  Game();
-  ~Game();
-  void newgame(const bool, const bool); //bool is true is Human
-  void setup();
-
-}
-*/
-
 using namespace std;
 
-Game::Game() : board(new ChessBoard()), white(NULL), black(NULL), whitescore(0), blackscore(0) {}
+Game::Game() : board(new ChessBoard()), white(NULL), black(NULL), whitescore(0), blackscore(0), selfSetup(false) {}
 
 Game::~Game() {
     delete board;
@@ -36,11 +17,28 @@ Game::~Game() {
     delete black;
 }
 
-void Game::newGame(const bool whitePlayer, const bool blackPlayer) {
+void initializePlayer (Player * const player. const int humanAI) {
+    if (player != NULL) delete player;
+    if (humanAI == 0) {
+        player = new Human();
+    } else {
+        player = new Computer();
+        player->setAILevel(humanAI);
+    }
+}
+
+void Game::newGame(const int whitePlayer, const int blackPlayer) {
+    initializePlayer(white, whitePlayer);
+    initializePlayer(black, blackPlayer);
+    if (!selfSetup) board->init();
+    while ( 
 }
 
 void Game::setup() {
+
+    selfSetup = true;
 }
+
 
 void Game::displayScore() {
     cout << "White Score: " << whitescore << endl;
@@ -53,7 +51,7 @@ void Game::saveRecord() {
 }
 
 //owner is true if white
-void Game::resign (bool owner) {
+void Game::endGame (bool owner) {
     if (owner) {
         ++whitescore;
     } else {
@@ -67,6 +65,7 @@ void Game::resign (bool owner) {
     delete black;
     board = new ChessBoard();
     white = black = NULL;
+    selfSetup = false;
 }
 
 

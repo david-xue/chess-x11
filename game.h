@@ -10,15 +10,18 @@ class Game {
   Player* black;
   int whitescore;
   int blackscore;
+  bool selfSetup;
 
   void displayScore();
   void saveRecord();
-  void resign(bool);
+  void endGame(bool);
+
+  void initializePlayer (Player* const, const int); 
 
  public:
   Game();
   ~Game();
-  void newgame(const bool, const bool); //bool is true is Human
+  void newgame(const int, const int); //0 if human, 1-4 indicate AI level
   void setup();
 
 }
