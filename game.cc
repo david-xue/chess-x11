@@ -7,6 +7,7 @@
 //#include "display.h"
 #include <sstream>
 #include <string>
+#include <iostream>
 
 using namespace std;
 

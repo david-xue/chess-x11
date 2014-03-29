@@ -3,7 +3,7 @@
 #include "piece.h"
 
 class Bishop: Piece {
-    bool canReach(const Posn);
+    int canReach(const Posn);
     public:
     int val();
 };

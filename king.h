@@ -5,9 +5,9 @@
 class King: public Piece {
   bool moved;
   bool isCastling(const Posn);
- public:
-  King(ChessBoard*, char, bool);
-  bool canReach(const Posn);
+  int canReach(const Posn);
+public:
+  King (ChessBoard *, char, bool);
   int move(const Posn);
   int val();
   void setMoved(const bool);

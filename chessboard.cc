@@ -4,6 +4,8 @@
 #include "cell.h"
 #include "piece.h"
 #include "pawn.h"
+#include "rook.h"
+#include "king.h"
 using namespace std;
 
 void ChessBoard::update() {
@@ -17,7 +19,7 @@ void ChessBoard::update() {
     if (white[l]->canReach(p)) w = true;
     if (black[l]->canReach(p)) b = true;
    }
-   board[n][m]->update(p, w, b);
+   board[n][m]->update(w, b);
   }
  }
 }

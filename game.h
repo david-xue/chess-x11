@@ -23,9 +23,9 @@ class Game {
  public:
   Game();
   ~Game();
-  void newgame(const int, const int); //0 if human, 1-4 indicate AI level
+  void newGame(const int, const int); //0 if human, 1-4 indicate AI level
   void setup();
 
-}
+};
 
 #endif
