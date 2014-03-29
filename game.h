@@ -16,7 +16,7 @@ class Game {
 
   void displayScore();
   void saveRecord();
-  void endGame(bool);
+  void endGame(int);
 
   void initializePlayer (Player* const, const int); 
   void readLine (const bool);
