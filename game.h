@@ -16,9 +16,9 @@ class Game {
   void resign(bool);
 
  public:
-  Game(bool, bool) //bool = true if player is human; false if computer
+  Game();
   ~Game();
-  void newgame();
+  void newgame(const bool, const bool); //bool is true is Human
   void setup();
 
 }
