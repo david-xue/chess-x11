@@ -39,28 +39,44 @@ int ChessBoard::move(const Posn orig, const Posn dest) {
    cd->putPiece(p);
   if (res == 2) {
         // for castling, King would've checked all conditions except for rook's part  
-        Piece * rook;
-        // I'll clean up these ridiculous conditions later...
+         Rook * rook;
+        // I'll clean up these ridiculous conditions later... (this seriously needs a new function)
       if (orig.col < dest.col) {
-          rook = board[orig.row][7]->getPiece();
+          rook = dynamic_cast<Rook*>(board[orig.row][7]->getPiece());
+          if (rook == NULL) {
+            cd->takeoff();
+            co->putPiece(p);
+            King *k = static_cast<King*>(p);
+            k->setMoved(false);
+            return 0;
+         }
           if ((isExposed(Posn(orig.row, 7), Posn(orig.row, 5), rook->getOwner())) || rook->hasMoved() || (rook->getOwner() != p->getOwner())) {
                 cd->takeoff();
                 co->putPiece(p);
-                p->setMoved(false);
+                King *k = static_cast<King*>(p);
+                k->setMoved(false);
                 return 0;
             } 
-            rook = board[orig.row][7]->takeoff();
-            board[orig.row][5]->putPiece(rook);
-        } else { 
-            rook = board[orig.row][0]->getPiece();
-          if ((isExposed(Posn(orig.row, 0), Posn(orig.row, 3), rook->getOwner())) || rook->hasMoved() || (rook->getOwner() != p->getOwner())) {
+            Piece* r = board[orig.row][7]->takeoff();
+            board[orig.row][5]->putPiece(r);
+      } else { 
+            rook = dynamic_cast<Rook*>(board[orig.row][7]->getPiece());
+            if (rook == NULL) {
                 cd->takeoff();
                 co->putPiece(p);
-                p->setMoved(false);
+                King *k = static_cast<King*>(p);
+                k->setMoved(false);
+                return 0;
+            }
+            if ((isExposed(Posn(orig.row, 0), Posn(orig.row, 3), rook->getOwner())) || rook->hasMoved() || (rook->getOwner() != p->getOwner())) {
+                cd->takeoff();
+                co->putPiece(p);
+                King *k = static_cast<King*>(p);
+                k->setMoved(false);
                 return 0;
             } 
-            rook = board[orig.row][0]->takeoff();
-            board[orig.row][3]->putPiece(rook);
+            Piece *r = board[orig.row][0]->takeoff();
+            board[orig.row][3]->putPiece(r);
         }
         m.castling = true;
         rook->setMoved(true);
@@ -87,6 +103,9 @@ int ChessBoard::move(const Posn orig, const Posn dest) {
    }
    if (stalemate(blackmove)) return 4;
   }
+  // shouldn't get here...
+  // but if so
+  return 0;
 }
 
 void ChessBoard::undo() {
@@ -163,5 +182,5 @@ bool ChessBoard::isAttacked(const Posn posn, bool opponent) {
 }
 
 bool ChessBoard::isWhiteMove() {
-    return !blackMove;
+    return !blackmove;
 }

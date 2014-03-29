@@ -1,7 +1,9 @@
 #include "posn.h"
 #include "bishop.h"
+#include "piece.h"
 #include <cstdlib>
 
+class ChessBoard;
 int Bishop::val() {
     return 3;
 }

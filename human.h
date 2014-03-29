@@ -6,6 +6,7 @@
 class Human: public Player {
     int readLine(std::string);
     public:
+    Human(ChessBoard*, bool);
     int move();
 };
 

@@ -1,4 +1,5 @@
 #include "player.h"
+#include "human.h"
 #include "chessboard.h"
 #include "posn.h"
 #include <sstream>
@@ -6,8 +7,13 @@
 #include <string>
 
 using namespace std;
+
+Human::Human(ChessBoard* b, bool isWhite) : Player(b, isWhite) {}
+
 //0 if draw, 1 if legal non ending move, 2 if resign, 3 if checkmate
 int Human::move() {
+    try {
+    string s;
     while (getline(cin,s)) {
         int result = readLine(s);
         if (result > 0) {
@@ -17,24 +23,27 @@ int Human::move() {
             } else {
                 return result;
             }
-        }
+        }   
     }
+    string err = "out of moves";
+    throw err;
+    } catch (string &s) {
     //what to do if moves run out?
-    string errorStr = "out of moves"
-    throw errorStr;
+    throw;
+    }
 }
 
 // 0 if illegal, 1 if legal non ending move, 2 if resign, 3 if checkmate, 4 if draw
 int Human::readLine(string s) {
     istringstream ss(s);
-    string cmd1, cmd2, cmd3;
+    string cmd, cmd2, cmd3;
     if (ss >> cmd) {
         if (cmd == "move") {
             if (ss >> cmd2) {
                 if (ss >> cmd3) {
                     Posn pos1 = convertCoords(cmd2);
                     Posn pos2 = convertCoords(cmd3);
-                    if ((pos1 != NULL) && (pos2 != NULL)) {
+                    if ((pos1.row != -1) && (pos2.row != -1)) {
                         // other checking is done in ChessBoard (e.g. piece not empty, piece belongs to right guy, etc)
                         int result = board->move(pos1,pos2);
                         if (result == 0) {
@@ -45,7 +54,7 @@ int Human::readLine(string s) {
                             return 1;
                         } else if (result == 2) {
                             //check (still legal)
-                            if (owner) {
+                            if (isWhite) {
                                 cout << "White checks Black" << endl;
                             } else {
                                 cout << "Black checks White" << endl;

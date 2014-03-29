@@ -14,6 +14,6 @@ Posn Posn::convertCoords(string s) {
             }
         }
     }
-    return NULL;
+    return Posn(-1,-1);
 }
 

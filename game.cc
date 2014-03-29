@@ -19,19 +19,24 @@ Game::~Game() {
     delete black;
 }
 
-void initializePlayer (Player * const player. const int humanAI) {
+void Game::initializePlayer (bool isWhite, const int humanAI) {
+    Player * player;
+    if (isWhite) {
+        player = white;
+    } else {
+        player = black;
+    }
     if (player != NULL) delete player;
     if (humanAI == 0) {
-        player = new Human();
+        player = new Human(board, isWhite);
     } else {
-        player = new Computer();
-        player->setAILevel(humanAI);
+        player = new Computer(board, isWhite, humanAI);
     }
 }
 
 void Game::newGame(const int whitePlayer, const int blackPlayer) {
-    initializePlayer(white, whitePlayer);
-    initializePlayer(black, blackPlayer);
+    initializePlayer(true, whitePlayer);
+    initializePlayer(false, blackPlayer);
     if (!selfSetup) board->init();
     bool whiteTurn = board->isWhiteMove();
     Player* currentPlayer;
@@ -54,10 +59,10 @@ void Game::newGame(const int whitePlayer, const int blackPlayer) {
             //draw
             endGame(0);
             break;
-        } else if (result = 1) {
+        } else if (result == 1) {
             //legal, non-game-ending move
             whiteTurn = !whiteTurn;
-        } else if (result = 2) {
+        } else if (result == 2) {
             //resign
             if (whiteTurn) {
                 endGame(2);
@@ -65,7 +70,7 @@ void Game::newGame(const int whitePlayer, const int blackPlayer) {
                 endGame(1);
             }
             break;
-        } else if (result = 3) {
+        } else if (result == 3) {
             // win by checkmate
             if (whiteTurn) {
                 endGame(1);

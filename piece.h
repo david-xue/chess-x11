@@ -1,8 +1,7 @@
 #ifndef __PIECE_H__
 #define __PIECE_H__
 #include "posn.h"
-
-class ChessBoard;
+#include "chessboard.h"
 
 class Piece {
  protected:

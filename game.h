@@ -18,7 +18,7 @@ class Game {
   void saveRecord();
   void endGame(int);
 
-  void initializePlayer (Player* const, const int); 
+  void initializePlayer (bool, const int); 
  
  public:
   Game();
