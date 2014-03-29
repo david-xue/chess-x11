@@ -33,7 +33,8 @@ class ChessBoard {
  //basic methods: for boolean values, true = white and false = black 
  //init initialize the chessboard
   void init();
-  void init(const char, const Posn);
+  //setup mode, char indicates the piece, Posn indicates position, bool indicate whether it is white who goes next
+  void init(const char, const Posn, const bool);
  //move places the piece from one cell to another(also place the rook to right cell when castling; check for en passant) 
  //     updates the status of cells
  //     notifies display; add this move to the record; determine if there is a check/checkmate/stalemate
@@ -47,7 +48,9 @@ class ChessBoard {
   bool isExposed(const Posn, const Posn, bool); //pieces will call this to determine if their moves get their king exposed
 
   //isAttacked returns true if the square is reachable by the opponent's pieces
-  bool isAttacked(const Posn, bool)
+  bool isAttacked(const Posn, bool);
+  // returns true if white goes next, false if black goes next
+  bool isWhiteMove();
 
  //friend functions for display and AI:
   friend std::ostream& operator<<(std::ostream&, ChessBoard&);

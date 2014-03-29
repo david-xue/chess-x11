@@ -160,3 +160,6 @@ bool ChessBoard::isAttacked(const Posn posn, bool opponent) {
     }
 }
 
+bool ChessBoard::isWhiteMove() {
+    return !blackMove;
+}

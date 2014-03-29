@@ -17,7 +17,7 @@ int King::val() {
 int King::canReach(const Posn posn) {
     int rowDist = abs(posn.row - pos.row);
     int colDist = abs(posn.col - pos.col);
-    if (((rowDist == 0) && (colDist == 1)) || ((rowDist == 1) && (colDist == 0))) {
+    if (((colDist == 1) || (colDist == 0)) && ((rowDist == 1) || (rowDist == 0)) && (!((rowDist == 0) && (colDist == 0)))) {
         moved = true;
         return 1;
     } else {

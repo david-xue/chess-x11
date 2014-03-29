@@ -3,6 +3,7 @@
 #include "player.h"
 #include "human.h"
 #include "computer.h"
+#include "posn.h"
 //#include "display.h"
 #include <sstream>
 #include <string>
@@ -27,11 +28,45 @@ void initializePlayer (Player * const player. const int humanAI) {
     }
 }
 
+Posn Game::convertCoords(string s) {
+    if (s.length() == 2) {
+        int col;
+    } else {
+        return NULL;
+    }
+}
+
+// true if the game ends (resign or win or draw)
+bool Game::readLine(const bool whiteTurn) {
+    string s;
+    getline(cin,s);
+    istringstream ss(s);
+    string cmd1, cmd2, cmd3;
+    if (ss >> cmd) {
+        if (cmd == "move") {
+            if (ss >> cmd2) {
+                if (ss >> cmd3) {
+                    Posn pos1 = 
+        } else if (cmd == "resign") {
+            endGame(whiteTurn);
+            return true;
+        } else {
+            cout << "Bad input" << endl;
+        }
+    }
+    return false;
+}
+
 void Game::newGame(const int whitePlayer, const int blackPlayer) {
     initializePlayer(white, whitePlayer);
     initializePlayer(black, blackPlayer);
     if (!selfSetup) board->init();
-    while ( 
+    bool whiteTurn = board->isWhiteMove();
+    while (true) {
+        if (readLine(whiteTurn)) break;
+        whiteTurn = !whiteTurn;
+    }
+            
 }
 
 void Game::setup() {

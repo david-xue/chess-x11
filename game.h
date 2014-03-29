@@ -1,8 +1,10 @@
 #ifndef __GAME_H__
 #define __GAME_H__
+#include <string>
 #include "chessboard.h"
 #include "player.h"
-#include "display.h"
+#include "posn.h"
+//#include "display.h"
 
 class Game {
   ChessBoard* board;
@@ -17,7 +19,8 @@ class Game {
   void endGame(bool);
 
   void initializePlayer (Player* const, const int); 
-
+  void readLine (const bool);
+  Posn convertCoord (std::string); 
  public:
   Game();
   ~Game();
