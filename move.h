@@ -11,6 +11,7 @@ struct Move {
  bool castling;
  bool promotion;
  Piece* enpassant;
+ char name;
 };
 
 #endif
