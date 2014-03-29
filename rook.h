@@ -8,7 +8,7 @@ class Rook: public Piece {
 public: 
     int val();
     bool hasMoved();
-    bool setMoved(const bool);
+    void setMoved( const bool );
 };
 
 #endif

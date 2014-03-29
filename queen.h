@@ -1,7 +1,6 @@
 #ifndef __QUEEN_H__
-#ifndef __QUEEN_H__
-#include "queen.h"
-
+#define __QUEEN_H__
+#include "piece.h"
 class Queen: public Piece {
     int canReach(const Posn);
     public:

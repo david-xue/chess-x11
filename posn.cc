@@ -2,9 +2,9 @@
 #include <string>
 using namespace std;
 
-Posn(int row = 0, int col = 0) : row(row), col(col) {};
+Posn::Posn(int row, int col) : row(row), col(col) {};
 
-Posn Posn::convertCoords(string s) {
+Posn convertCoords(string s) {
     if (s.length() == 2) {
         int col = s[0] - 'a';
         int row = s[1] - '1';

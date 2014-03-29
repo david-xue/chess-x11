@@ -6,16 +6,16 @@ int Rook::val() {
     return 5;
 }
 
-bool hasMoved () {return moved;}
+bool Rook::hasMoved () {return moved;}
 
-void setMoved () {
-    moved = true;
+void Rook::setMoved (const bool moved) {
+    this->moved = moved;
 }
 
 int Rook::canReach(const Posn posn) {
     int rowDist = posn.row - pos.row;
     int colDist = posn.col - pos.col;
-    Posn directionPosn (0,0);
+    Posn direction (0,0);
     if ((rowDist > 0) && (colDist == 0)) {
         direction.row = 1;
     } else if ((rowDist < 0) && (colDist == 0)) {
@@ -30,13 +30,13 @@ int Rook::canReach(const Posn posn) {
     Posn temp (0,0);
     if (direction.row != 0) {
         for (int i = 1; i < abs(rowDist); ++i) {
-            temp.row = pos.row + i * directionPosn.row;
-            if (board->isOccupied(temp,owner) > 0) return return 0;
+            temp.row = pos.row + i * direction.row;
+            if (board->isOccupied(temp,owner) > 0) return 0;
         }
     } else {
         for (int i = 1; i < abs(colDist); ++i) {
-            temp.col = pos.col + i * directionPosn.col;
-            if (board->isOccupied(temp,owner) > 0) return return 0;
+            temp.col = pos.col + i * direction.col;
+            if (board->isOccupied(temp,owner) > 0) return 0;
         }
     }
     if (!moved) moved = true;
