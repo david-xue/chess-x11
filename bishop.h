@@ -3,10 +3,9 @@
 #include "piece.h"
 
 class Bishop: Piece {
- public:
-  bool canReach(const Posn);
-  bool move(const Posn);
-  int val();
+    bool canReach(const Posn);
+    public:
+    int val();
 };
 
 #endif

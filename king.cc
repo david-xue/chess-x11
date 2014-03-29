@@ -37,7 +37,7 @@ bool King::isCastling(const Posn posn) {
             if ((pos.row != 7) && (!owner)) return false;
 
             if (pos.col != 4) return false;
-            Posn tempP = {pos.row, 0}; 
+            Posn tempP (pos.row, 0}); 
             if (posn.col == 2) {
                 tempP.col = 3;
                 if ((board->isOccupied(posn, tempP, owner) != 0) && (board->isAttacked(tempP, !owner))) return false;

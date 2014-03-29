@@ -62,9 +62,9 @@ bool operator==(const Posn p1, const Posn p2) {
 }
 
 int Pawn::isenPassant(const Posn posn) {
- Posn p = {pos.row, posn.col};
+ Posn p (pos.row, posn.col);
  Move m = (board->getRecord())->back();
- Posn o = {owner ? 1 : 6, posn.col};
+ Posn o (owner ? 1 : 6, posn.col);
  if (m.orig == o && m.dest == p && m.name == (owner ? 'p' : 'P')) {
   return 4;
  }
