@@ -1,14 +1,16 @@
 #ifndef __MOVE_H__
 #define __MOVE_H__
 
+class Piece;
+
 struct Move {
- const char name;
- const char captured;
- const Posn orig;
- const Posn dest;
- const bool castling;
- const char promotion;
- const bool enpassant;
+ Piece* mover;
+ Piece* captured;
+ Posn orig;
+ Posn dest;
+ bool castling;
+ bool promotion;
+ bool enpassant;
 };
 
 #endif
