@@ -5,10 +5,9 @@ class ChessBoard;
 
 class Player {
   ChessBoard* board;
-
  public:
   Player(ChessBoard*);
-  virtual bool move() = 0;//return false if the end of game has been reached
+  virtual int move() = 0;//return 0 if draw, 1 if non-game-ending move, 2 if resign, 3 if checkmate
 
 };
 

@@ -19,8 +19,7 @@ class Game {
   void endGame(int);
 
   void initializePlayer (Player* const, const int); 
-  void readLine (const bool);
-  Posn convertCoord (std::string); 
+ 
  public:
   Game();
   ~Game();

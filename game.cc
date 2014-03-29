@@ -28,84 +28,52 @@ void initializePlayer (Player * const player. const int humanAI) {
     }
 }
 
-Posn Game::convertCoords(string s) {
-    if (s.length() == 2) {
-        int col = s[0] - 'a';
-        int row = s[1] - '1';
-        if ((col >= 0) && (col <= 7)) {
-            if ((row >= 0) && (row <= 7)) {
-                return Posn(row,col);
-            }
-        }
-    }
-    return NULL;
-}
-
-// true if the game ends (resign or win or draw)
-bool Game::readLine(const bool whiteTurn) {
-    string s;
-    getline(cin,s);
-    istringstream ss(s);
-    string cmd1, cmd2, cmd3;
-    if (ss >> cmd) {
-        if (cmd == "move") {
-            if (ss >> cmd2) {
-                if (ss >> cmd3) {
-                    Posn pos1 = convertCoords(cmd2);
-                    Posn pos2 = convertCoords(cmd3);
-                    if ((pos1 != NULL) && (pos2 != NULL)) {
-                        // other checking is done in ChessBoard (e.g. piece not empty, piece belongs to right guy, etc)
-                        int result = board->move(pos1,pos2);
-                        if (result == 0) {
-                            cout << "Illegal Move" << endl;
-                        } else if (result == 1) {
-                            //legal move
-                        } else if (result == 2) {
-                            if (whiteTurn) {
-                                cout << "White checks Black" << endl;
-                            } else {
-                                cout << "Black checks White" << endl;
-                            }
-                        } else if (result == 3) {
-                            if (whiteTurn) {
-                                endGame(1);
-                            } else {
-                                endGame(2);
-                            }
-                            return true;
-                        } else if (result == 4) {
-                            endGame(0);
-                        }
-                        return false;
-                    }
-                }
-            }
-        } else if (cmd == "resign") {
-            if (whiteTurn) {
-                endGame(2);
-            } else {
-                endGame(1);
-            }
-            return true;
-        } else {
-            cout << "Bad input on command" << endl;
-            return false;
-        }
-    }
-    cout << "Bad input on move" << endl;
-    return false;
-}
-
 void Game::newGame(const int whitePlayer, const int blackPlayer) {
     initializePlayer(white, whitePlayer);
     initializePlayer(black, blackPlayer);
     if (!selfSetup) board->init();
     bool whiteTurn = board->isWhiteMove();
+    Player* currentPlayer;
     while (true) {
-        if (readLine(whiteTurn)) break;
-        whiteTurn = !whiteTurn;
-    }
-            
+        if (whiteTurn) {
+            currentPlayer = white;
+        } else {
+            currentPlayer = black;
+        }
+        int result;
+        try {
+            result = currentPlayer->move();
+        } catch (string &s) {
+            // out of moves
+            cerr << s << endl;
+            endGame(0);
+            break;
+        }
+        if (result == 0) {
+            //draw
+            endGame(0);
+            break;
+        } else if (result = 1) {
+            //legal, non-game-ending move
+            whiteTurn = !whiteTurn;
+        } else if (result = 2) {
+            //resign
+            if (whiteTurn) {
+                endGame(2);
+            } else{
+                endGame(1);
+            }
+            break;
+        } else if (result = 3) {
+            // win by checkmate
+            if (whiteTurn) {
+                endGame(1);
+            } else {
+                endGame(2);
+            }
+            break;
+        }
+    }    
 }
 
 void Game::setup() {
