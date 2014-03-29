@@ -10,7 +10,7 @@ struct Move {
  Posn dest;
  bool castling;
  bool promotion;
- bool enpassant;
+ Piece* enpassant;
 };
 
 #endif
