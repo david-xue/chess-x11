@@ -62,6 +62,7 @@ int Pawn::canReach(const Posn posn) {
 
 int Pawn::isenPassant(const Posn posn) {
  Posn p (pos.row, posn.col);
+ if (board->getRecord()->size() == 0) return 0;
  Move m = (board->getRecord())->back();
  Posn o (owner ? 1 : 6, posn.col);
  if (m.orig == o && m.dest == p && m.name == (owner ? 'p' : 'P')) {

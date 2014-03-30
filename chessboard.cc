@@ -23,7 +23,7 @@ Piece* newPiece(ChessBoard* const b, const char c, bool player) {
  if (c == 'n' || c == 'N') return new Knight(b, c, player);
  else return new Rook(b, c, player);
 }
-ChessBoard::ChessBoard(): tp(new TextDisplay), gp(new GraphDisplay), record(new vector<Move>) {
+ChessBoard::ChessBoard(): tp(new TextDisplay), gp(new GraphDisplay), record(new vector<Move>), turn(0), blackmove(false) {
   for (int n = 0; n < 8; n++) {
    for (int m = 0; m < 8; m++) {
     board[n][m] = new Cell(Posn(n, m));
@@ -72,7 +72,7 @@ vector<Move>* ChessBoard::getRecord () {
 void ChessBoard::game() {
  for (int n = 0; n < 8; n++) {
   board[1][n]->putPiece(black[8 + n]);
-  board[6][n]->putPiece(black[8 + n]);
+  board[6][n]->putPiece(white[8 + n]);
  }
  board[0][4]->putPiece(black[0]);
  board[0][3]->putPiece(black[1]);
@@ -222,13 +222,16 @@ int ChessBoard::move(const Posn orig, const Posn dest) {
    blackmove = !blackmove;
    turn += 1;
    record->push_back(m);
+   tp->notify(m);
+   cout << *tp;
    if (check(blackmove)) {
     if (checkmate(blackmove)) {
      return 3;
     }
     else return 2;
    }
-   if (stalemate(blackmove)) return 4;
+   else if (stalemate(blackmove)) return 4;
+   else return 1;
   }
   // shouldn't get here...
   // but if so
