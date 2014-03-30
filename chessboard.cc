@@ -26,7 +26,7 @@ Piece* newPiece(ChessBoard* const b, const char c, bool player) {
 ChessBoard::ChessBoard(): tp(new TextDisplay), gp(new GraphDisplay), record(new vector<Move>), turn(0), blackmove(false) {
   for (int n = 0; n < 8; n++) {
    for (int m = 0; m < 8; m++) {
-    board[n][m] = new Cell(Posn(n, m));
+    board[n][m] = new Cell(Posn(n, m), gp);
    }
   }
   white[0] = newPiece(this, 'K', true);
