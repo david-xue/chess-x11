@@ -38,7 +38,11 @@ void Game::initializePlayer (bool isWhite, const int humanAI) {
 void Game::newGame(const int whitePlayer, const int blackPlayer) {
     initializePlayer(true, whitePlayer);
     initializePlayer(false, blackPlayer);
-    if (!selfSetup) board->game();
+    if (!selfSetup) {
+        board->game();
+    } else {
+        cout << *board;
+    }
     bool whiteTurn = board->isWhiteMove();
     Player* currentPlayer;
     while (true) {

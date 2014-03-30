@@ -301,4 +301,8 @@ bool ChessBoard::isWhiteMove() {
   bool ChessBoard::stalemate(bool) {return false;}//same
 
 
+ostream& operator<< (ostream& out, ChessBoard& b) {
+    cout << *(b.tp);
+    return out;
+}
 
