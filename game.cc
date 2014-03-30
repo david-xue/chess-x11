@@ -20,17 +20,18 @@ Game::~Game() {
 }
 
 void Game::initializePlayer (bool isWhite, const int humanAI) {
-    Player * player;
-    if (isWhite) {
-        player = white;
-    } else {
-        player = black;
-    }
-    if (player != NULL) delete player;
     if (humanAI == 0) {
-        player = new Human(board, isWhite);
+        if (isWhite) {
+            white = new Human(board, isWhite);
+        } else {
+            black = new Human(board, isWhite);
+        }
     } else {
-        player = new Computer(board, isWhite, humanAI);
+        if (isWhite) {
+            white = new Computer(board, isWhite, humanAI);
+        } else {
+            black = new Computer(board, isWhite, humanAI);
+        }
     }
 }
 
@@ -48,6 +49,7 @@ void Game::newGame(const int whitePlayer, const int blackPlayer) {
         }
         int result;
         try {
+            if (currentPlayer == NULL) cout << "WTF" << endl;
             result = currentPlayer->move();
         } catch (string &s) {
             // out of moves
