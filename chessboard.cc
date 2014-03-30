@@ -53,13 +53,16 @@ ChessBoard::ChessBoard(): tp(new TextDisplay), gp(new GraphDisplay), record(new 
 
 ChessBoard::~ChessBoard() {
     for (int i = 0; i < 8; ++i) {
-        delete [] board[i];
+     for (int j = 0; j < 8; j++)
+        delete board[i][j];
     }
-    delete [] white;
-    delete [] black;
+    for (int n = 0; n < 16; n++) {
+     delete white[n];
+     delete black[n];
+    }
     delete tp;
     delete gp;
-    delete [] record;
+    delete record;
 }
 
 vector<Move>* ChessBoard::getRecord () {
