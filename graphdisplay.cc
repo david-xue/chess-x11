@@ -17,7 +17,13 @@ GraphDisplay::GraphDisplay() {
     string extension = ".bmp";
     string fileName;
     for (int i=0; i<12; ++i) {
-        fileName = tempArray[i] + extension;
+        if (tempArray[i] != toupper(tempArray[i])) {
+            //fileName = tempArray[i] + "black" + extension;
+            fileName = "testingblack.bmp";
+        } else {
+            //fileName = tempArray[i] + "white" + extension;
+            fileName = "testingwhite.bmp";
+        }
         // the params are width, height, hotspot_x, hotspot_y, fileName, xwindow
         imageMap[tempArray[i]] = new Image(50,50,0,0,fileName,xwindow);
     }
