@@ -85,7 +85,7 @@ void Game::newGame(const int whitePlayer, const int blackPlayer) {
 }
 
 void Game::setup() {
-
+    board->setup();
     selfSetup = true;
 }
 
