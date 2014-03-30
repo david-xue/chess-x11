@@ -11,6 +11,7 @@ class TextDisplay {
  public:
   void init();
   void init (const char, const Posn);
+  void init(const Posn);
   void notify(const Move, bool undo = false);
   friend std::ostream& operator<<(std::ostream&, TextDisplay&);
 };

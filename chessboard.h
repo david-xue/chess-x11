@@ -31,10 +31,10 @@ class ChessBoard {
   ~ChessBoard();
  
  //basic methods: for boolean values, true = white and false = black 
- //init initialize the chessboard
-  void init();
-  //setup mode, char indicates the piece, Posn indicates position, bool indicate whether it is white who goes next
-  void init(const char, const Posn, const bool);
+ //game starts a new game
+  void game();
+ //setup mode
+  void setup();
  //move places the piece from one cell to another(also place the rook to right cell when castling; check for en passant) 
  //     updates the status of cells
  //     notifies display; add this move to the record; determine if there is a check/checkmate/stalemate

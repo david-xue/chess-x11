@@ -57,10 +57,7 @@ int Pawn::canReach(const Posn posn) {
    else return 0;
   }
  }
-}
-
-bool operator==(const Posn p1, const Posn p2) {
- return p1.row == p2.row && p1.col == p2.col;
+ return 0;
 }
 
 int Pawn::isenPassant(const Posn posn) {

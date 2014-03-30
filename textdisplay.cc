@@ -29,6 +29,12 @@ void TextDisplay::init(const char c, const Posn p) {
  board[p.row][p.col] = c;
 }
 
+void TextDisplay::init(const Posn p) {
+ int n = p.row;
+ int m = p.col;
+ board[n][m] = (n + m) % 2 ? ' ' : '_';
+}
+
 void TextDisplay::notify(const Move m, bool undo) {
  if (!undo) {
   int x = m.orig.row;

@@ -3,7 +3,7 @@
 #include "piece.h"
 
 class ChessBoard;
-class Bishop: Piece {
+class Bishop: public Piece {
     public:
     Bishop(ChessBoard*, char, bool);
 	int canReach(const Posn);

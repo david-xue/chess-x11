@@ -118,11 +118,9 @@ void ChessBoard::setup() {
  } while (true);
 }
 void ChessBoard::update() {
- Posn p;
  for (int n = 0; n < 8; n++) {
   for (int m = 0; m < 8; m++) {
-   p.row = n;
-   p.col = m;
+   Posn p(n, m);
    bool w, b;
    for (int l = 0; l < 16; l++) {
     if (white[l]->canReach(p)) w = true;
