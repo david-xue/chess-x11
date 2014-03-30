@@ -6,7 +6,7 @@
 #include "chessboard.h"
 using namespace std;
 
-Pawn::Pawn(ChessBoard* b, char c, bool player) : Piece(b, c, player){}
+Pawn::Pawn(ChessBoard* b, char c, bool player) : Piece(b, c, player), prom(0) {}
 
 Pawn::~Pawn() {
  delete prom;
