@@ -2,8 +2,10 @@
 #include "king.h"
 #include "piece.h"
 #include "chessboard.h"
-//#include <vector>
+#include "move.h"
+#include <vector>
 #include <cstdlib>
+using namespace std;
 
 // Does King need its own constructor because of moved? (I think this depends on the compiler)
 King::King(ChessBoard * board, char c, bool o) : Piece(board, c, o), moved(false) {}
@@ -17,11 +19,9 @@ int King::canReach(const Posn posn) {
     int rowDist = abs(posn.row - pos.row);
     int colDist = abs(posn.col - pos.col);
     if (((colDist == 1) || (colDist == 0)) && ((rowDist == 1) || (rowDist == 0)) && (!((rowDist == 0) && (colDist == 0)))) {
-        moved = true;
         return 1;
     } else {
         if (isCastling(posn)) {
-            moved = true;
             return 2;
         } else {
             return 0;
@@ -30,32 +30,52 @@ int King::canReach(const Posn posn) {
 }
 
 bool King::isCastling(const Posn posn) {
-    if (!moved) {
-            if (pos.row != posn.row) return false;
-            if ((pos.row != 0) && owner) return false;
-            if ((pos.row != 7) && (!owner)) return false;
-            if (pos.col != 4) return false;
-            Posn tempP (pos.row, 0); 
-            if (posn.col == 2) {
-                tempP.col = 3;
-                if ((board->isOccupied(tempP, owner) != 0) && (board->isAttacked(tempP, !owner))) return false;
-                tempP.col = 1;
-                if (board->isOccupied(tempP, owner) != 0) return false;
-            } else if (posn.col == 6) {
-                tempP.col = 5;
-                if ((board->isOccupied(tempP, owner) != 0) && (board->isAttacked(tempP, !owner))) return false;
+    if (posn.row != pos.row || abs(posn.col - pos.col) != 2) return false;
+    if (posn.col > pos. col) {
+     if (board->isAttacked(Posn(pos.row, 5), !owner)) return false;
+    } else {
+     if (board->isAttacked(Posn(pos.row, 3), !owner)) return false;
+    }
+    if (!moved && !isThreatened ) {
+           vector<Move>* record = board->getRecord();
+            if (record->size() == 0) return true;
+            else {
+             bool res = true;
+             if (posn.col > pos.col) {
+              if (board->isOccupied(Posn(pos.row, pos.col + 1), owner)) return false;
+              Posn p(pos.row, 7);
+              for (vector<Move>::reverse_iterator i = record->rbegin(); i != record->rend(); i++) {
+               if (i->orig == p || i->dest == p) res = false;
+              }
+              return res;
+             } else {
+              if (board->isOccupied(Posn(pos.row, pos.col - 1), owner)) return false;
+              if (board->isOccupied(Posn(pos.row, pos.col - 3), owner)) return false;
+              Posn p(pos.row, 0);
+              for (vector<Move>::reverse_iterator i = record->rbegin(); i != record->rend(); i++) {
+               if (i->orig == p || i->dest == p) res = false;
+              }
+              return res;
+             }
             }
-            if (board->isAttacked(pos, !owner)) {
-                return false;
-            } else {
-                return true;
-            }
-
     } else {
         return false;
     }
 }
                     
-void King::setMoved(const bool hasMoved) {
-    moved = hasMoved;
+void King::update(const Posn p, bool white, bool black) {
+ vector<Move>* record = board->getRecord();
+ bool res;
+ if (record->size()) {
+  for (vector<Move>::reverse_iterator i = record->rbegin(); i != record->rend(); i++) {
+   if (i->mover == this) {
+    res = true;
+    break;
+   }
+  }
+ }    
+ moved = res;
+ pos = p;
+ isThreatened = owner ? black : white;                                                                                              
+ isCovered = owner ? white : black;                                                                                                 
 }

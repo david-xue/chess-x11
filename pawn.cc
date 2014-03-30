@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <vector>
 #include "chessboard.h"
+using namespace std;
 
 Pawn::Pawn(ChessBoard* b, char c, bool player) : Piece(b, c, player){}
 
@@ -76,3 +77,17 @@ void Pawn::unpromote() {
  prom = 0;
 }
 
+void Pawn::update(const Posn p, bool white, bool black) {
+ vector<Move>* record = board->getRecord();
+ bool res = false;
+ if (record->size()) {
+  for (vector<Move>::reverse_iterator i = record->rbegin(); i != record->rend(); i++) {
+   if (i->mover == this) {
+    res = true;
+    break;                                                                                                                                                 }                                                                                                                                                      }        
+ }
+ moved = res; 
+ pos = p;
+ isThreatened = owner ? black : white;
+ isCovered = owner ? white : black;
+}

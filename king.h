@@ -12,7 +12,7 @@ public:
   int canReach(const Posn);
   int move(const Posn);
   int val();
-  void setMoved(const bool);
+  void update(const Posn, bool, bool);
 };
 
 #endif

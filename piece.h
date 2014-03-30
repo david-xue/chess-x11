@@ -22,7 +22,7 @@ class Piece {
   bool getOwner();
   Posn getPosn();
  //update the status; the second arg is the new threat status and the last is cover status
-  void update(const Posn, bool, bool);
+  virtual void update(const Posn, bool, bool);
 };
 
 #endif

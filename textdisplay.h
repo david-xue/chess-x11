@@ -9,6 +9,7 @@ class TextDisplay {
   char board[8][8];
 
  public:
+  TextDisplay();
   void init();
   void init (const char, const Posn);
   void init(const Posn);

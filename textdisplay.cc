@@ -4,6 +4,13 @@
 #include "piece.h"
 using namespace std;
 
+TextDisplay::TextDisplay() {
+ for (int n = 0; n < 8; n++)
+  for (int m = 0; m < 8; m++) {
+   board[n][m] = (n + m) % 2 ? ' ' : '_';
+  }
+}
+
 void TextDisplay::init() {
  board[0][0] = board[0][7] = 'r';
  board[0][1] = board[0][6] = 'n';
@@ -19,10 +26,6 @@ void TextDisplay::init() {
   board[1][n] = 'p';
   board[6][n] = 'P';
  }
- for (int n = 2; n < 6; n++) 
-  for (int m = 0; m < 8; m++) {
-   board[n][m] = (n + m) % 2 ? ' ' : '_';
-  }
 }
 
 void TextDisplay::init(const char c, const Posn p) {

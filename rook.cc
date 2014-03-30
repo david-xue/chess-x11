@@ -8,12 +8,6 @@ int Rook::val() {
     return 5;
 }
 
-bool Rook::hasMoved () {return moved;}
-
-void Rook::setMoved (const bool moved) {
-    this->moved = moved;
-}
-
 int Rook::canReach(const Posn posn) {
     int rowDist = posn.row - pos.row;
     int colDist = posn.col - pos.col;
@@ -41,6 +35,5 @@ int Rook::canReach(const Posn posn) {
             if (board->isOccupied(temp,owner) > 0) return 0;
         }
     }
-    if (!moved) moved = true;
     return 1;
 }

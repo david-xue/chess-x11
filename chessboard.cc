@@ -161,67 +161,34 @@ int ChessBoard::move(const Posn orig, const Posn dest) {
   int res = p->move(dest);
   if (res == 0) return 0;
   else {
-    Move m = {p, cd->takeoff(), orig, dest, false, false, 0};
+   Move m = {p, cd->takeoff(), orig, dest, false, false, 0};
    co->takeoff();
    cd->putPiece(p);
   if (res == 2) {
-        // for castling, King would've checked all conditions except for rook's part  
-         Rook * rook;
-        // I'll clean up these ridiculous conditions later... (this seriously needs a new function)
-      if (orig.col < dest.col) {
-          rook = dynamic_cast<Rook*>(board[orig.row][7]->getPiece());
-          if (rook == NULL) {
-            cd->takeoff();
-            co->putPiece(p);
-            King *k = static_cast<King*>(p);
-            k->setMoved(false);
-            return 0;
-         }
-          if ((isExposed(Posn(orig.row, 7), Posn(orig.row, 5), rook->getOwner())) || rook->hasMoved() || (rook->getOwner() != p->getOwner())) {
-                cd->takeoff();
-                co->putPiece(p);
-                King *k = static_cast<King*>(p);
-                k->setMoved(false);
-                return 0;
-            } 
-            Piece* r = board[orig.row][7]->takeoff();
-            board[orig.row][5]->putPiece(r);
-      } else { 
-            rook = dynamic_cast<Rook*>(board[orig.row][7]->getPiece());
-            if (rook == NULL) {
-                cd->takeoff();
-                co->putPiece(p);
-                King *k = static_cast<King*>(p);
-                k->setMoved(false);
-                return 0;
-            }
-            if ((isExposed(Posn(orig.row, 0), Posn(orig.row, 3), rook->getOwner())) || rook->hasMoved() || (rook->getOwner() != p->getOwner())) {
-                cd->takeoff();
-                co->putPiece(p);
-                King *k = static_cast<King*>(p);
-                k->setMoved(false);
-                return 0;
-            } 
-            Piece *r = board[orig.row][0]->takeoff();
-            board[orig.row][3]->putPiece(r);
-        }
         m.castling = true;
-        rook->setMoved(true);
+        if (orig.col < dest.col) {
+         Piece* rook = board[orig.row][7]->takeoff();
+         board[orig.row][5]->putPiece(rook);
+        } else {
+         Piece* rook = board[orig.row][0]->takeoff();
+         board[orig.row][5]->putPiece(rook);
+        }
     }
    if (res == 3) {
     char c;
-    cout << "Enter the piece you want." << endl;
+    cout << "Promotion: enter the piece you want." << endl;
     cin >> c;
-    //to be continued..
+    Pawn* pawn = static_cast<Pawn*>(p);
+    pawn->promote(newPiece(this, c, pawn->getOwner()));
     m.promotion = true;
    }
    if (res == 4) {
     m.enpassant = board[orig.row][dest.col]->takeoff();
    }
-   update();
    blackmove = !blackmove;
    turn += 1;
    record->push_back(m);
+   update();
    tp->notify(m);
    cout << *tp;
    if (check(blackmove)) {
@@ -240,6 +207,7 @@ int ChessBoard::move(const Posn orig, const Posn dest) {
 
 void ChessBoard::undo() {
  Move m = record->back();
+ record->pop_back();
  Cell* co = board[m.orig.row][m.orig.col];
  Cell* cd = board[m.dest.row][m.orig.col];
  cd->putPiece(m.captured);
@@ -262,7 +230,6 @@ void ChessBoard::undo() {
   board[m.orig.row][m.dest.col]->putPiece(m.enpassant);
  }
  update();
- record->pop_back();
  blackmove = !blackmove;
  turn -= 1;
 }
@@ -279,6 +246,7 @@ bool ChessBoard::isExposed(const Posn orig, const Posn dest, bool player) {
    if ((black[n]->getPosn()).row != -1) {
     if (black[n]->canReach(white[0]->getPosn()))
      res = true;
+     break;
    }
   }
  }
@@ -286,7 +254,8 @@ bool ChessBoard::isExposed(const Posn orig, const Posn dest, bool player) {
   for (int n = 0; n < 16; n++) {
    if ((white[n]->getPosn()).row != -1) {
     if (white[n]->canReach(black[0]->getPosn()))
-     return true;
+     res = true;
+     break;
    }
   }
  }
