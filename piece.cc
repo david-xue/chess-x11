@@ -1,9 +1,9 @@
 #include "piece.h"
 #include "chessboard.h"
+#include "posn.h"
 
 Piece::Piece(ChessBoard* b, char c, bool o): 
- board(b), name(c), owner(o) {
- pos.row = pos.col = -1;
+ name(c), owner(o), board(b), pos(Posn(-1, -1)) {
 }
 
 char Piece::getName() {
