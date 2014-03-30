@@ -12,7 +12,7 @@
 using namespace std;
 
 GraphDisplay::GraphDisplay() {
-    Xwindow * xwindow = new Xwindow();
+    xwindow = new Xwindow();
     char tempArray [12] = {'K','Q','R','B','K','P','k','q','r','b','k','p'};
     string extension = ".bmp";
     string fileName;

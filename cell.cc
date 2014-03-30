@@ -1,3 +1,4 @@
+#include <iostream>
 #include "cell.h"
 #include "piece.h"
 #include "graphdisplay.h"
@@ -12,14 +13,14 @@ void Cell::putPiece(Piece* piece) {
   p = piece;
   if (p) {
       p->update(pos, wcanreach, bcanreach);
-      gp->draw(p->getName(),pos);
+      //gp->draw(p->getName(),pos);
   }
 }
 
 Piece* Cell::takeoff() {
  Piece* temp = p;
  p = 0;
- gp->undraw(pos);
+// gp->undraw(pos);
  Posn n (-1, -1);
  if (temp) temp->update(n, false, false);
  return temp;
