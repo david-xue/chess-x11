@@ -29,6 +29,11 @@ class Xwindow {
 
   // Prints the first 10000 available fonts
   void showAvailableFonts();
+
+    GC* getGC();
+    Window* getWindow();
+    Display* getDisplay();
+
 };
 
 #endif

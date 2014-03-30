@@ -1,8 +1,7 @@
-#ifndef __GRAPHDISPLAY_H__
-#define __GRAPHDISPLAY_H__
+#ifndef __IMAGE_H__
+#define __IMAGE_H__
 
-class GraphDisplay {
-#if 0
+class Image {
     Pixmap bitmap;
     /* these variables will contain the dimensions of the loaded bitmap. */
     unsigned int bitmap_width, bitmap_height;
@@ -14,7 +13,10 @@ class GraphDisplay {
     Window root_win; // = DefaultRootWindow(display);
     /* load the bitmap found in the file "icon.bmp", create a pixmap      */
     /* containing its data in the server, and put its ID in the 'bitmap'  */
-    /* variable.                                                          */
+    /* variable.                                                         */
+
+    GC gc; //graphics context (we'll get this from Window)
+
     int rc = XReadBitmapFile(display, root_win,"icon.bmp", &bitmap_width, &bitmap_height, &bitmap, &hotspot_x, &hotspot_y);
     /* check for failure or success. */
     switch (rc) {
@@ -31,7 +33,12 @@ class GraphDisplay {
             /* bitmap loaded successfully - do something with it... */
             break;
     }
-#endif
+
+    public:
+    Image(Window*, int, int, char*);
+    void drawImage(int, int);
+    ~Image(); //free's the pixmap
+
 };
 
 #endif
