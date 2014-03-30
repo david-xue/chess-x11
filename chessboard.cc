@@ -51,6 +51,21 @@ ChessBoard::ChessBoard(): tp(new TextDisplay), gp(new GraphDisplay), record(new 
   }
 }
 
+ChessBoard::~ChessBoard() {
+    for (int i = 0; i < 8; ++i) {
+        delete [] board[i];
+    }
+    delete [] white;
+    delete [] black;
+    delete tp;
+    delete gp;
+    delete [] record;
+}
+
+vector<Move>* ChessBoard::getRecord () {
+    return record;
+}
+
 void ChessBoard::game() {
  for (int n = 0; n < 8; n++) {
   board[1][n]->putPiece(black[8 + n]);
