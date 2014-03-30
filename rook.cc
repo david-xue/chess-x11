@@ -2,6 +2,8 @@
 #include "rook.h"
 #include <cstdlib>
 
+Rook::Rook(ChessBoard* b, char c, bool player) : Piece(b, c, player){}
+
 int Rook::val() {
     return 5;
 }

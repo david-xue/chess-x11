@@ -2,6 +2,8 @@
 #include "queen.h"
 #include <cstdlib>
 
+Queen::Queen(ChessBoard* b, char c, bool player) : Piece(b, c, player){}
+
 int Queen::val() {
     return 9;
 }

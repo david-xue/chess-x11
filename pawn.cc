@@ -5,6 +5,8 @@
 #include <vector>
 #include "chessboard.h"
 
+Pawn::Pawn(ChessBoard* b, char c, bool player) : Piece(b, c, player){}
+
 Pawn::~Pawn() {
  delete prom;
 }
