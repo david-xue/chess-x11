@@ -1,8 +1,8 @@
 #ifndef __GRAPHDISPLAY_H__
 #define __GRAPHDISPLAY_H__
-#include "display.h"
+//#include "display.h"
 
-class GraphDisplay: public Display {
+class GraphDisplay {
 };
 
 #endif

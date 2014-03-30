@@ -3,11 +3,120 @@
 #include "move.h"
 #include "cell.h"
 #include "piece.h"
+#include "king.h"
+#include "queen.h"
+#include "bishop.h"
+#include "knight.h"
+#include "rook.h"
 #include "pawn.h"
+#include "textdisplay.h"
+#include "graphdisplay.h"
 #include "rook.h"
 #include "king.h"
 using namespace std;
 
+Piece* newPiece(ChessBoard* const b, const char c, bool player) {
+ if (c == 'p' || c == 'P') return new Pawn(b, c, player);
+ if (c == 'k' || c == 'K') return new King(b, c, player);
+ if (c == 'q' || c == 'Q') return new Queen(b, c, player);
+ if (c == 'b' || c == 'B') return new Bishop(b, c, player);
+ if (c == 'n' || c == 'N') return new Knight(b, c, player);
+ else return new Rook(b, c, player);
+}
+ChessBoard::ChessBoard(): tp(new TextDisplay), gp(new GraphDisplay), record(new vector<Move>) {
+  for (int n = 0; n < 8; n++) {
+   for (int m = 0; m < 8; m++) {
+    board[n][m] = new Cell(Posn(n, m));
+   }
+  }
+  white[0] = newPiece(this, 'K', true);
+  white[1] = newPiece(this, 'Q', true);
+  white[6] = newPiece(this, 'B', true);
+  white[7] = newPiece(this, 'B', true);
+  white[4] = newPiece(this, 'N', true);
+  white[5] = newPiece(this, 'N', true);
+  white[2] = newPiece(this, 'R', true);
+  white[3] = newPiece(this, 'R', true);
+  black[0] = newPiece(this, 'k', false);
+  black[1] = newPiece(this, 'q', false);
+  black[6] = newPiece(this, 'b', false);
+  black[7] = newPiece(this, 'b', false);
+  black[4] = newPiece(this, 'n', false);
+  black[5] = newPiece(this, 'n', false);
+  black[2] = newPiece(this, 'r', false);
+  black[3] = newPiece(this, 'r', false);
+  for (int n = 8; n < 16; n++) {
+   white[n] = newPiece(this, 'P', true);
+   black[n] = newPiece(this, 'p', false);
+  }
+}
+
+void ChessBoard::game() {
+ for (int n = 0; n < 8; n++) {
+  board[1][n]->putPiece(black[8 + n]);
+  board[6][n]->putPiece(black[8 + n]);
+ }
+ board[0][4]->putPiece(black[0]);
+ board[0][3]->putPiece(black[1]);
+ board[0][2]->putPiece(black[6]);
+ board[0][5]->putPiece(black[7]);
+ board[0][1]->putPiece(black[4]);
+ board[0][6]->putPiece(black[5]);
+ board[0][0]->putPiece(black[2]);
+ board[0][7]->putPiece(black[3]);
+ board[7][4]->putPiece(white[0]);
+ board[7][3]->putPiece(white[1]);
+ board[7][2]->putPiece(white[6]);
+ board[7][5]->putPiece(white[7]);
+ board[7][1]->putPiece(white[4]);
+ board[7][6]->putPiece(white[5]);
+ board[7][0]->putPiece(white[2]);
+ board[7][7]->putPiece(white[3]);
+ tp->init();
+ cout << *tp;
+}
+
+void ChessBoard::setup() {
+ string comm;
+ do {
+  cout << "Enter command." << endl;
+  cin >> comm;
+  if (comm == "+") {
+   char c;
+   string pos;
+   cin >> c >> pos;
+   Posn p = convertCoords(pos);
+   if (c > 'a') {
+    for (int n = 0; n < 16; n++) {
+     Piece* pc = black[n];
+     if (pc->getName() == c && pc->getPosn().row == -1 ) board[p.row][p.col]->putPiece(pc);
+     tp->init(c, p);
+     break;
+    }
+   } else {
+    for (int n = 0; n < 16; n++) {
+     Piece* pc = white[n];
+     if (pc->getName() == c && pc->getPosn().row == -1 ) board[p.row][p.col]->putPiece(pc);
+     tp->init(c, p);
+     break;
+    }
+   }
+  }
+  if (comm == "-") {
+   string pos;
+   cin >> pos;
+   Posn p = convertCoords(pos);
+   board[p.row][p.col]->takeoff();
+   tp->init(p);
+  }
+  if (comm == "=") {
+   string colour;
+   cin >> colour;
+   blackmove = colour == "white" ? false : true;
+  }
+  if (comm == "done") break;
+ } while (true);
+}
 void ChessBoard::update() {
  Posn p;
  for (int n = 0; n < 8; n++) {

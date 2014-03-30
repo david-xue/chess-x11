@@ -7,9 +7,8 @@ class Pawn: public Piece {
   Piece* prom;
  
   int isenPassant(const Posn);
-  int canReach(const Posn);
-
  public:
+  int canReach(const Posn);  
   ~Pawn();
   int val();
   char getName();

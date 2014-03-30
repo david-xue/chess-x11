@@ -3,6 +3,7 @@
 #include "piece.h"
 #include <cstdlib>
 
+Bishop::Bishop(ChessBoard* b, char c, bool player) : Piece(b, c, player){}
 class ChessBoard;
 int Bishop::val() {
     return 3;

@@ -2,9 +2,11 @@
 #define __BISHOP_H__
 #include "piece.h"
 
+class ChessBoard;
 class Bishop: Piece {
-    int canReach(const Posn);
     public:
+    Bishop(ChessBoard*, char, bool);
+	int canReach(const Posn);
     int val();
 };
 
