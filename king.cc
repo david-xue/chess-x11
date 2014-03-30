@@ -33,8 +33,10 @@ bool King::isCastling(const Posn posn) {
     if (posn.row != pos.row || abs(posn.col - pos.col) != 2) return false;
     if (posn.col > pos. col) {
      if (board->isAttacked(Posn(pos.row, 5), !owner)) return false;
+     if (board->isOccupied(Posn(pos.row, 6), owner)) return false;
     } else {
      if (board->isAttacked(Posn(pos.row, 3), !owner)) return false;
+     if (board->isOccupied(Posn(pos.row, 2), !owner)) return false;
     }
     if (!moved && !isThreatened ) {
            vector<Move>* record = board->getRecord();
@@ -47,7 +49,7 @@ bool King::isCastling(const Posn posn) {
               for (vector<Move>::reverse_iterator i = record->rbegin(); i != record->rend(); i++) {
                if (i->orig == p || i->dest == p) res = false;
               }
-              cout << res << endl;
+              cout << res << endl; //What is this?
               return res;
              } else {
               if (board->isOccupied(Posn(pos.row, pos.col - 1), owner)) return false;
