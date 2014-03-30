@@ -45,9 +45,6 @@ int Human::readLine(string s) {
                     Posn pos2 = convertCoords(cmd3);
                     if ((pos1.row != -1) && (pos2.row != -1)) {
                         // other checking is done in ChessBoard (e.g. piece not empty, piece belongs to right guy, etc)
-                        // DEBUG
-                        //cout << "POS1 " << pos1.row << pos1.col << endl;
-                        //cout << "POS2 " << pos2.row << pos2.col << endl;
                         int result = board->move(pos1,pos2);
                         if (result == 0) {
                             cout << "Illegal Move" << endl;
