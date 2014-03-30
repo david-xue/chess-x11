@@ -119,6 +119,7 @@ void ChessBoard::setup() {
      break;
     }
    }
+   cout << *tp;
   }
   if (comm == "-") {
    string pos;
@@ -126,6 +127,7 @@ void ChessBoard::setup() {
    Posn p = convertCoords(pos);
    board[p.row][p.col]->takeoff();
    tp->init(p);
+   cout << *tp;
   }
   if (comm == "=") {
    string colour;
