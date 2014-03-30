@@ -10,11 +10,11 @@ void TextDisplay::init() {
  board[0][2] = board[0][5] = 'b';
  board[0][3] = 'q';
  board[0][4] = 'k';
- board[0][0] = board[0][7] = 'R';
- board[0][1] = board[0][6] = 'N';
- board[0][2] = board[0][5] = 'B';
- board[0][3] = 'Q';
- board[0][4] = 'K';
+ board[7][0] = board[7][7] = 'R';
+ board[7][1] = board[7][6] = 'N';
+ board[7][2] = board[7][5] = 'B';
+ board[7][3] = 'Q';
+ board[7][4] = 'K';
  for (int n = 0; n < 8; n++) {
   board[1][n] = 'p';
   board[6][n] = 'P';
@@ -79,7 +79,11 @@ void TextDisplay::notify(const Move m, bool undo) {
 
 ostream& operator<<(ostream& out, TextDisplay& tp) {
  for (int n = 0; n < 8; n++) {
-  out << 8 - n << " " << tp.board[n] << endl;
+  out << 8 - n << " ";
+  for (int m = 0; m < 8; m++) {
+   out << tp.board[n][m];
+  }
+  out << endl;
  }
  out << "  abcdefgh" << endl;
  return out;
