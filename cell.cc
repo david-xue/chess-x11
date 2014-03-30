@@ -1,7 +1,7 @@
 #include "cell.h"
 #include "piece.h"
-
-Cell::Cell(Posn p): pos(p) {}
+#include "graphdisplay.h"
+Cell::Cell(Posn p, GraphDisplay* gp): pos(p), gp(gp) {}
 
 Piece* Cell::getPiece() {
  return p;
@@ -10,12 +10,16 @@ Piece* Cell::getPiece() {
 void Cell::putPiece(Piece* piece) {
   takeoff();
   p = piece;
-  if (p) p->update(pos, wcanreach, bcanreach);
+  if (p) {
+      p->update(pos, wcanreach, bcanreach);
+      gp->draw(p->getName(),pos);
+  }
 }
 
 Piece* Cell::takeoff() {
  Piece* temp = p;
  p = 0;
+ gp->undraw(pos);
  Posn n (-1, -1);
  if (temp) temp->update(n, false, false);
  return temp;

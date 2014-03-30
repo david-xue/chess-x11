@@ -25,7 +25,7 @@ GraphDisplay::GraphDisplay() {
             fileName = "testingwhite.bmp";
         }
         // the params are width, height, hotspot_x, hotspot_y, fileName, xwindow
-        imageMap[tempArray[i]] = new Image(50,50,0,0,fileName,xwindow);
+        imageMap[tempArray[i]] = new Image(40,40,0,0,fileName,xwindow);
     }
 }
 
@@ -38,8 +38,8 @@ GraphDisplay::~GraphDisplay() {
 }
 
 void GraphDisplay::draw (char piece, Posn pos) { 
-    int y = pos.row * 50;
-    int x = pos.col * 50;
+    int y = pos.row * 40;
+    int x = pos.col * 40;
     try {
         imageMap.at(piece)->drawImage(x,y);
     } catch (const out_of_range& except) {
@@ -48,7 +48,7 @@ void GraphDisplay::draw (char piece, Posn pos) {
 }
 
 void GraphDisplay::undraw(Posn pos) {
-    int y = pos.row * 50;
-    int x = pos.col * 50;
-    xwindow->fillRectangle(x, y, 50, 50, 0); //draw a white rectangle in place
+    int y = pos.row * 40;
+    int x = pos.col * 40;
+    xwindow->fillRectangle(x, y, 40, 40, Xwindow::White); //draw a white rectangle in place
 }

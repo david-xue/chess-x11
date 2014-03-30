@@ -3,6 +3,7 @@
 #include "posn.h"
 
 class Piece;
+class GraphDisplay;
 
 class Cell {
   const Posn pos;
@@ -10,9 +11,11 @@ class Cell {
   bool wcanreach;
   bool bcanreach;
 
+  GraphDisplay *gp;
+
  public:
  
-  Cell(Posn);
+  Cell(Posn, GraphDisplay*);
   Piece* getPiece();
   void putPiece(Piece*);//will takeoff the occupying piece
   Piece* takeoff();//the posn of piece taken off is set (-1, -1)
