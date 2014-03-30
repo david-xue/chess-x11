@@ -2,6 +2,7 @@
 #define __KING_H__
 #include "piece.h"
 
+class ChessBoard;
 class King: public Piece {
   bool moved;
   bool isCastling(const Posn);

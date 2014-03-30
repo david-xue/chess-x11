@@ -8,6 +8,7 @@ class Pawn: public Piece {
  
   int isenPassant(const Posn);
  public:
+	Pawn(ChessBoard*, char, bool);
   int canReach(const Posn);  
   ~Pawn();
   int val();
