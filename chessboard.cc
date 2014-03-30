@@ -137,14 +137,23 @@ void ChessBoard::setup() {
   if (comm == "done") break;
  } while (true);
 }
+
 void ChessBoard::update() {
  for (int n = 0; n < 8; n++) {
   for (int m = 0; m < 8; m++) {
    Posn p(n, m);
-   bool w, b;
+   bool w, b = false;
    for (int l = 0; l < 16; l++) {
-    if (white[l]->canReach(p)) w = true;
-    if (black[l]->canReach(p)) b = true;
+    Posn p1 = white[l]->getPosn();
+    Posn p2 = black[l]->getPosn();
+    if (!(p == p1) && white[l]->canReach(p)) {
+     w = true;
+     //cout << white[l]->getName() << " can reach " << n << m << endl;
+    }
+    if (!(p == p2) && black[l]->canReach(p)) {
+     b = true;
+     //cout << black[l]->getName() << " can reach " << n << m << endl;
+    }
    }
    board[n][m]->update(w, b);
   }
