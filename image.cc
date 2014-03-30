@@ -1,42 +1,39 @@
+#include "image.h"
+#include "window.h"
+#include <X11/Xlib.h>
+#include <string>
 
-class Image {
-    Pixmap bitmap;
-    /* these variables will contain the dimensions of the loaded bitmap. */
-    unsigned int bitmap_width, bitmap_height;
-    /* these variables will contain the location of the hot-spot of the   */
-    /* loaded bitmap.                                                    */
-    int hotspot_x, hotspot_y;
-    /* this variable will contain the ID of the root window of the screen */
-    /* for which we want the pixmap to be created.                        */
-    Window root_win; // = DefaultRootWindow(display);
-    /* load the bitmap found in the file "icon.bmp", create a pixmap      */
-    /* containing its data in the server, and put its ID in the 'bitmap'  */
-    /* variable.                                                         */
+using namespace std;
 
-    GC gc; //graphics context (we'll get this from Window)
-
-    int rc = XReadBitmapFile(display, root_win,"icon.bmp", &bitmap_width, &bitmap_height, &bitmap, &hotspot_x, &hotspot_y);
+Image::Image(int width, int height, int hotspot_x, int hotspot_y, string fileName, Xwindow* xwin) :
+    bitmap_width(width), bitmap_height(height), hotspot_x(hotspot_x), hotspot_y(hotspot_y), fileName(fileName) {
+    root_win = xwin->getWindow();
+    display = xwin->getDisplay();
+    gc = xwin->getGC();
+    XReadBitmapFile(display, *root_win, fileName.c_str(), &bitmap_width, &bitmap_height, &bitmap, &hotspot_x, &hotspot_y);
     /* check for failure or success. */
+    /*
     switch (rc) {
-        case BitmapOpenFailed:
-            fprintf(stderr, "XReadBitmapFile - could not open file 'icon.bmp'.\n");
-            break;
-        case BitmapFileInvalid:
-            fprintf(stderr,"XReadBitmapFile - file '%s' doesn't contain a valid bitmap.\n", "icon.bmp");
-            break;
-        case BitmapNoMemory:
-            fprintf(stderr, "XReadBitmapFile - not enough memory.\n");
-            break;
-        case BitmapSuccess:
-            /* bitmap loaded successfully - do something with it... */
-            break;
+    case BitmapOpenFailed:
+        cerr << "XReadBitmapFile - could not open file: " << fileName << endl;
+        break;
+    case BitmapFileInvalid:
+        cerr << "XReadBitmapFile - file " << fileName << " doesn't contain a valid bitmap." << endl;
+        break;
+    case BitmapNoMemory:
+        cerr << "XReadBitmapFile - not enough memory." << endl;
+        break;
+    case BitmapSuccess:
+        // bitmap loaded successfully - do something with it...
+        break;
     }
+    */
+}
 
-    public:
-    Image(Window*, int, int, char*);
-    void drawImage(int, int);
-    ~Image(); //free's the pixmap
+void Image::drawImage (int x, int y) {
+    XCopyPlane(display, bitmap, *root_win, *gc, 0, 0, bitmap_width, bitmap_height, x, y, 1);
+}
 
-};
-
-Image::Image(Window*
+Image::~Image () {
+    XFreePixmap(display, bitmap);
+}
