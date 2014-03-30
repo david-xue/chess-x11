@@ -47,6 +47,7 @@ bool King::isCastling(const Posn posn) {
               for (vector<Move>::reverse_iterator i = record->rbegin(); i != record->rend(); i++) {
                if (i->orig == p || i->dest == p) res = false;
               }
+              cout << res << endl;
               return res;
              } else {
               if (board->isOccupied(Posn(pos.row, pos.col - 1), owner)) return false;

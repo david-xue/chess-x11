@@ -27,11 +27,9 @@ void Piece::update(const Posn p, bool white, bool black) {
 
 int Piece::move(const Posn p) {
  if (board->isOccupied(p, owner) == 1) {
-  cout << "Occupied by your own piece." << endl;
   return 0;
  }
  else if (board->isExposed(pos, p, owner)) {
-  cout << "Watch out for your king." << endl;
   return 0;
  }
  else return canReach(p);

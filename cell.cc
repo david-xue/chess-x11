@@ -12,14 +12,14 @@ void Cell::putPiece(Piece* piece) {
   p = piece;
   if (p) {
       p->update(pos, wcanreach, bcanreach);
-      gp->draw(p->getName(),pos);
+   if(gp)   gp->draw(p->getName(),pos);
   }
 }
 
 Piece* Cell::takeoff() {
  Piece* temp = p;
  p = 0;
- gp->undraw(pos);
+ if (gp) gp->undraw(pos);
  Posn n (-1, -1);
  if (temp) temp->update(n, false, false);
  return temp;
