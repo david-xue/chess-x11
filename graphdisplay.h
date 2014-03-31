@@ -18,7 +18,10 @@ class GraphDisplay {
 	unsigned int bitmap_width, bitmap_height;
 
 	std::map<char, Pixmap*> imageMap; //pointers to loaded images (mapped by char, eg K,k,Q)
+    Pixmap* xaxis;
+    Pixmap* yaxis;
 
+    unsigned int axis_width, axis_height;
 public:
 
 	GraphDisplay();

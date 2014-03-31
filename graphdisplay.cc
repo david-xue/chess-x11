@@ -112,13 +112,14 @@ GraphDisplay::GraphDisplay() {
 	XSync(display, False);
 
 
-    char tempArray [13] = {'K','Q','R','B','N','P','k','q','r','b','n','p', ' '};
+    char tempArray [15] = {'K','Q','R','B','N','P','k','q','r','b','n','p', ' ', 'x', 'y'};
 	string extension = ".xbm";
     string fileName;
 
     bitmap_width = bitmap_height = 80;
-
-	for (int i = 0; i < 13; ++i) {
+    axis_width = 640;
+    axis_height = 30;
+	for (int i = 0; i < 15; ++i) {
         if (tempArray[i] == ' ') {
             fileName = "blank.xbm";
         } else if (tempArray[i] == 'x') {
@@ -146,8 +147,21 @@ GraphDisplay::GraphDisplay() {
 		/* load the bitmap found in the file "icon.bmp", create a pixmap     */
 		/* containing its data in the server, and put its ID in the 'bitmap' */
 		/* variable.                                                         */
-		int rc = XReadBitmapFile(display, win, fileName.c_str(),
+        int rc;
+
+        if ((fileName != "xaxis.xbm") && (fileName != "yaxis.xbm")) {
+		    rc = XReadBitmapFile(display, win, fileName.c_str(),
 				&bitmap_width, &bitmap_height, bitmap, &hotspot_x, &hotspot_y);
+            imageMap[tempArray[i]] = bitmap;
+        } else if (fileName == "xaxis.xbm") {
+            xaxis = bitmap;
+            rc = XReadBitmapFile(display, win, fileName.c_str(),
+                    &axis_width, &axis_height, bitmap, &hotspot_x, &hotspot_y);
+        } else if (fileName == "yaxis.xbm") {
+            yaxis = bitmap;
+            rc = XReadBitmapFile(display, win, fileName.c_str(),
+                    &axis_height, &axis_width, bitmap, &hotspot_x, &hotspot_y);
+        }
 
 		switch (rc) {
 		case BitmapOpenFailed:
@@ -163,19 +177,18 @@ GraphDisplay::GraphDisplay() {
 			exit(1);
 			break;
 		}
-	    imageMap[tempArray[i]] = bitmap;
 
         XSync(display,false);
         //usleep(1);        
 	}
-/*    usleep(4);
-    XCopyPlane(display, *(imageMap.at('x')), win, gc, 0, 0, 640,
-				30, 30, 0, 1);
+
+    XCopyPlane(display, *xaxis, win, gc, 0, 0, axis_width,
+				axis_height, 30, 0, 1);
 	XSync(display, False);
-    XCopyPlane(display, *(imageMap.at('y')), win, gc, 0, 0, 30,
-                640, 0, 30, 1);
+    XCopyPlane(display, *yaxis, win, gc, 0, 0, axis_height,
+                axis_width, 0, 30, 1);
     XSync(display, False);
-*/
+
 
 }
 
