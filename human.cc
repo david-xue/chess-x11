@@ -75,6 +75,9 @@ int Human::readLine(string s) {
         } else if (cmd == "resign") {
             //this player lost
             return 2;
+        } else if (cmd == "undo") {
+            board->undo();
+            return 1;
         } else {
             cout << "Bad input on command" << endl;
             return 0;

@@ -2,7 +2,7 @@
 #include "cell.h"
 #include "piece.h"
 #include "graphdisplay.h"
-Cell::Cell(Posn p, GraphDisplay* gp): pos(p), gp(gp) {}
+Cell::Cell(Posn p, GraphDisplay* gp): pos(p), p(NULL),gp(gp) {}
 
 Piece* Cell::getPiece() {
  return p;
@@ -20,7 +20,7 @@ void Cell::putPiece(Piece* piece) {
 Piece* Cell::takeoff() {
  Piece* temp = p;
  p = 0;
- if (gp) gp->undraw(pos);
+if (gp) gp->undraw(pos);
  Posn n (-1, -1);
  if (temp) temp->update(n, false, false);
  return temp;

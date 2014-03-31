@@ -4,22 +4,32 @@
 #include <map>
 
 class Posn;
-class Xwindow;
-class Image;
 
 class GraphDisplay {
 
-    Xwindow* xwindow;
-    std::map<char,Image*> imageMap; //pointers to loaded images (mapped by char, eg K,k,Q)
-    
-    public:
-    
-    GraphDisplay();
-    ~GraphDisplay();
+	Display *display;
+	Window win;
 
-    void draw(char, Posn);
-    void undraw(Posn);
+	GC gc; /* GC (graphics context) used for drawing    */
+
+	unsigned int width, height; /* height and width for the new window.      */
+	/* these variables will contain the dimensions of the loaded bitmap. */
+
+	unsigned int bitmap_width, bitmap_height;
+
+	std::map<char, Pixmap*> imageMap; //pointers to loaded images (mapped by char, eg K,k,Q)
+
+public:
+
+	GraphDisplay();
+	~GraphDisplay();
+
+	void draw(char, Posn);
+	void undraw(Posn);
 
 };
+
+Window create_simple_window(Display*, int, int, int, int);
+GC create_gc(Display*, Window, int);
 
 #endif
