@@ -108,13 +108,15 @@ GraphDisplay::GraphDisplay() {
 	XSync(display, False);
 
 
-    char tempArray [12] = {'K','Q','R','B','K','P','k','q','r','b','k','p'};
+    char tempArray [13] = {'K','Q','R','B','N','P','k','q','r','b','n','p', ' '};
 	string extension = ".xbm";
     string fileName;
 
     bitmap_width = bitmap_height = 40;
-	for (int i = 0; i < 12; ++i) {
-		if (tempArray[i] != toupper(tempArray[i])) {
+	for (int i = 0; i < 13; ++i) {
+        if (tempArray[i] == ' ') {
+            fileName = "blank.xbm";
+        } else if (tempArray[i] != toupper(tempArray[i])) {
 			//fileName = tempArray[i] + "black" + extension;
 			fileName = "testingblack.xbm";
 		} else {
@@ -153,8 +155,10 @@ GraphDisplay::GraphDisplay() {
 			exit(1);
 			break;
 		}
+	    imageMap[tempArray[i]] = bitmap;
 
-		imageMap[tempArray[i]] = bitmap;
+        XSync(display,false);
+        
 	}
 }
 
@@ -163,7 +167,7 @@ GraphDisplay::~GraphDisplay() {
 	XFlush(display);
 
 	/* make a delay for a short period. */
-	sleep(4);
+	//sleep(4);
 
 	/* close the connection to the X server. */
 	XCloseDisplay(display);
@@ -182,14 +186,27 @@ void GraphDisplay::draw (char piece, Posn pos) {
 		XCopyPlane(display, *(imageMap.at(piece)), win, gc, 0, 0, bitmap_width,
 				bitmap_height, x, y, 1);
 		XSync(display, False);
-		usleep(4);
+		//usleep(4);
 	} catch (const out_of_range& except) {
 		cerr << "out of range error: " << except.what() << endl;
 	}
 }
 
 void GraphDisplay::undraw(Posn pos) {
- //   int y = pos.row * 40;
+    int y = pos.row * bitmap_height + 10;
+	int x = pos.col * bitmap_width + 10;
+	char blank = ' ';
+    try {
+	    XCopyPlane(display, *(imageMap.at(blank)), win, gc, 0, 0, bitmap_width,
+				bitmap_height, x, y, 1);
+		XSync(display, False);
+	} catch (const out_of_range& except) {
+		cerr << "out of range error: " << except.what() << endl;
+	}
+    
+    
+    
+    //   int y = pos.row * 40;
    // int x = pos.col * 40;
 //    xwindow->fillRectangle(x, y, 40, 40, Xwindow::White); //draw a white rectangle in place
 }
