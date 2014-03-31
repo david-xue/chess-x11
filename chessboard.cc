@@ -146,13 +146,13 @@ void ChessBoard::update() {
    for (int l = 0; l < 16; l++) {
     Posn p1 = white[l]->getPosn();
     Posn p2 = black[l]->getPosn();
-    if (!(p == p1) && white[l]->canReach(p)) {
+    if (!(p == p1) && (p1.row >= 0) && white[l]->canReach(p)) {
      w = true;
-     //cout << white[l]->getName() << " can reach " << n << m << endl;
+    // cout << white[l]->getName() << " can reach " << n << m << endl;
     }
-    if (!(p == p2) && black[l]->canReach(p)) {
+    if (!(p == p2) && (p2.row >= 0) && black[l]->canReach(p)) {
      b = true;
-     //cout << black[l]->getName() << " can reach " << n << m << endl;
+    // cout << black[l]->getName() << " can reach " << n << m << endl;
     }
    }
    board[n][m]->update(w, b);
@@ -293,13 +293,63 @@ bool ChessBoard::isWhiteMove() {
     return !blackmove;
 }
 
+bool ChessBoard::check(bool player) {
+ if (player) {
+  return white[0]->getThreats();
+ } else {
+  return black[0]->getThreats();
+ }
+}
 
+bool ChessBoard::checkmate(bool player) {
+ bool res = true;
+ Piece * king = player ? white[0] : black[0];
+ for (int n = 0; n < 8; n++) {
+  for (int m = 0; m < 8; m++) {
+   if (king->move(Posn(n, m))) {
+    res = false;
+    break;
+   }
+  }
+ }
+ return res;
+}
 
-//stub implementation to get linker working
-  bool ChessBoard::check(bool) {return false;}//move will call this to determine if the player is being checked
-  bool ChessBoard::checkmate(bool) {return false;}//same as above
-  bool ChessBoard::stalemate(bool) {return false;}//same
-
+bool ChessBoard::stalemate(bool player) {
+ bool res = true;
+ if (player) {
+ for (int n = 0; n < 16; n++) {
+  if (res == false) break;
+  if (white[n]->getPosn().row >= 0) {
+   for (int r = 0; r < 8; r++) {
+    if (res == false) break;
+    for (int c = 0; c < 8; c++) {
+     if (white[n]->move(Posn(r, c))) {
+      res = false;
+      break;
+     }
+    }
+   }
+  }
+ }
+ } else {
+ for (int n = 0; n < 16; n++) {                                                                                                                                      
+  if (res == false) break;                                                                                                                                           
+  if (black[n]->getPosn().row >= 0) {
+   for (int r = 0; r < 8; r++) {                                                                                                                                     
+    if (res == false) break;                                                                                                                                         
+    for (int c = 0; c < 8; c++) {                                                                                                                                    
+     if (black[n]->move(Posn(r, c))) {
+      res = false;                                                                                                                                                   
+      break;                                                                                                                                                         
+     }                                                                                                                                                               
+    }                                                                                                                                                                
+   }                                                                                                                                                                 
+  }                                                                                                                                                                  
+ }                                                                                                                                                        
+ }
+ return res;
+}
 
 ostream& operator<< (ostream& out, ChessBoard& b) {
     cout << *(b.tp);
