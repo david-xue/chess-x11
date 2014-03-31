@@ -2,6 +2,8 @@
 #include <string>
 using namespace std;
 
+Posn::Posn(): row(-1), col(-1) {}
+
 Posn::Posn(int row, int col) : row(row), col(col) {};
 
 Posn convertCoords(string s) {

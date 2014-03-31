@@ -9,6 +9,7 @@ class Piece;
 class Cell;
 class TextDisplay;
 class GraphDisplay;
+class Computer;
 
 class ChessBoard {
   Cell* board[8][8];
@@ -51,6 +52,7 @@ class ChessBoard {
   bool isAttacked(const Posn, bool);
   // returns true if white goes next, false if black goes next
   bool isWhiteMove();
+  void passPiece(Computer&, bool);
 
  //friend functions for display and AI:
   friend std::ostream& operator<<(std::ostream&, ChessBoard&);
@@ -58,8 +60,8 @@ class ChessBoard {
  friend bool isThreatened(const Posn, bool);
  //showThreatened displays the threatened pieces
   friend void showThreatened(const Posn, bool);
- //legalMove returns all legal moves of a piece
-  friend std::vector<Posn> legalMove(const Posn);
+ //legalMove returns all legal moves of a piece; caller's duty to delete the memory
+  friend std::vector<Posn>* legalMove(ChessBoard&, const Posn);
  //showlegalMove displays all legal moves of a piece
   friend void showlegalMove(const Posn);
  //safeMove returns all legal moves to cells that is not threatened
