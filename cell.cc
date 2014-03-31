@@ -8,19 +8,19 @@ Piece* Cell::getPiece() {
  return p;
 }
 
-void Cell::putPiece(Piece* piece) {
-  takeoff();
+void Cell::putPiece(Piece* piece, bool updateScreen) {
+  takeoff(updateScreen);
   p = piece;
   if (p) {
       p->update(pos, wcanreach, bcanreach);
-    if(gp) gp->draw(p->getName(),pos);
+    if(gp && updateScreen) gp->draw(p->getName(),pos);
   }
 }
 
-Piece* Cell::takeoff() {
+Piece* Cell::takeoff(bool updateScreen) {
  Piece* temp = p;
  p = 0;
-if (gp) gp->undraw(pos);
+if (gp, updateScreen) gp->undraw(pos);
  Posn n (-1, -1);
  if (temp) temp->update(n, false, false);
  return temp;

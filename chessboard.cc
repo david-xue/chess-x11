@@ -253,9 +253,9 @@ void ChessBoard::undo() {
 bool ChessBoard::isExposed(const Posn orig, const Posn dest, bool player) {
  Cell* co = board[orig.row][orig.col];
  Cell* cd = board[dest.row][dest.col];
- Piece* p1 = co->takeoff();
- Piece* p2 = cd->takeoff();
- cd->putPiece(p1);
+ Piece* p1 = co->takeoff(false);
+ Piece* p2 = cd->takeoff(false);
+ cd->putPiece(p1, false);
  bool res = false;
  if (player) {
   for (int n = 0; n < 16; n++) {
@@ -275,8 +275,8 @@ bool ChessBoard::isExposed(const Posn orig, const Posn dest, bool player) {
    }
   }
  }
- cd->putPiece(p2);
- co->putPiece(p1);
+ cd->putPiece(p2, false);
+ co->putPiece(p1, false);
  return res;
 } 
 

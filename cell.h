@@ -17,9 +17,9 @@ class Cell {
  
   Cell(Posn, GraphDisplay*);
   Piece* getPiece();
-  void putPiece(Piece*);//will takeoff the occupying piece
-  Piece* takeoff();//the posn of piece taken off is set (-1, -1)
-  void update(bool, bool);
+  void putPiece(Piece*, bool updateScreen = true);//will takeoff the occupying piece
+  Piece* takeoff(bool updateScreen = true);//the posn of piece taken off is set (-1, -1)
+  void update(bool,bool);
   bool getWhiteReach();
   bool getBlackReach();
 
