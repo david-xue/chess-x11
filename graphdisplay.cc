@@ -98,8 +98,8 @@ GraphDisplay::GraphDisplay() {
 	//cout << "window width - " << width << "; height - " << height << endl;
 
     // make the new window 500x500
-    width = 900;
-    height = 900;
+    width = 720;
+    height = 720;
 
 	/* create a simple window, as a direct child of the screen's   */
 	/* root window. Use the screen's white color as the background */
