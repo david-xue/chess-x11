@@ -1,6 +1,7 @@
 #include "posn.h"
 #include "queen.h"
 #include <cstdlib>
+using namespace std;
 
 Queen::Queen(ChessBoard* b, char c, bool player) : Piece(b, c, player){}
 
@@ -40,18 +41,18 @@ int Queen::canReach(const Posn posn) {
     if ((direction.row != 0) && (direction.col != 0)) {
         if (abs(rowDist) != abs(colDist)) return 0;
         for (int i = 1; i < abs(rowDist); ++i) {
-            temp.row += i * direction.row;
-            temp.col += i * direction.col;
+            temp.row += direction.row;
+            temp.col += direction.col;
             if (board->isOccupied(temp,owner) > 0) return 0;
         }
     } else if (direction.row != 0) {
         for (int i = 1; i < abs(rowDist); ++i) {
-            temp.row += i * direction.row;
+            temp.row += direction.row;
             if (board->isOccupied(temp,owner) > 0) return 0;
         }
     } else {
         for (int i = 1; i < abs(colDist); ++i) {
-            temp.col += i * direction.col;
+            temp.col += direction.col;
             if (board->isOccupied(temp,owner) > 0) return 0;
         }
     }

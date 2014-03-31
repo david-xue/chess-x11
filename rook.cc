@@ -26,12 +26,12 @@ int Rook::canReach(const Posn posn) {
     Posn temp (pos.row, pos.col);
     if (direction.row != 0) {
         for (int i = 1; i < abs(rowDist); ++i) {
-            temp.row += i * direction.row;
+            temp.row += direction.row;
             if (board->isOccupied(temp,owner) > 0) return 0;
         }
     } else {
         for (int i = 1; i < abs(colDist); ++i) {
-            temp.col += i * direction.col;
+            temp.col += direction.col;
             if (board->isOccupied(temp,owner) > 0) return 0;
         }
     }
