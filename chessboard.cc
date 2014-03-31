@@ -107,16 +107,19 @@ void ChessBoard::setup() {
    if (c > 'a') {
     for (int n = 0; n < 16; n++) {
      Piece* pc = black[n];
-     if (pc->getName() == c && pc->getPosn().row == -1 ) board[p.row][p.col]->putPiece(pc);
+     if (pc->getName() == c && pc->getPosn().row == -1 ) {
+         board[p.row][p.col]->putPiece(pc);
      tp->init(c, p);
      break;
+     }
     }
    } else {
     for (int n = 0; n < 16; n++) {
      Piece* pc = white[n];
-     if (pc->getName() == c && pc->getPosn().row == -1 ) board[p.row][p.col]->putPiece(pc);
+     if (pc->getName() == c && pc->getPosn().row == -1 ) {board[p.row][p.col]->putPiece(pc);
      tp->init(c, p);
      break;
+     }
     }
    }
    cout << *tp;
