@@ -36,22 +36,22 @@ int Queen::canReach(const Posn posn) {
             return 0;
         }
     }
-    Posn temp(0,0);
+    Posn temp(pos.row, pos.col);
     if ((direction.row != 0) && (direction.col != 0)) {
         if (abs(rowDist) != abs(colDist)) return 0;
         for (int i = 1; i < abs(rowDist); ++i) {
-            temp.row = pos.row + i * direction.row;
-            temp.col = pos.col + i * direction.col;
+            temp.row += i * direction.row;
+            temp.col += i * direction.col;
             if (board->isOccupied(temp,owner) > 0) return 0;
         }
     } else if (direction.row != 0) {
         for (int i = 1; i < abs(rowDist); ++i) {
-            temp.row = pos.row + i * direction.row;
+            temp.row += i * direction.row;
             if (board->isOccupied(temp,owner) > 0) return 0;
         }
     } else {
         for (int i = 1; i < abs(colDist); ++i) {
-            temp.col = pos.col + i * direction.col;
+            temp.col += i * direction.col;
             if (board->isOccupied(temp,owner) > 0) return 0;
         }
     }
