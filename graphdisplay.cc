@@ -112,13 +112,13 @@ GraphDisplay::GraphDisplay() {
 	XSync(display, False);
 
 
-    char tempArray [15] = {'K','Q','R','B','N','P','k','q','r','b','n','p', ' ', 'x', 'y'};
+    char tempArray [13] = {'K','Q','R','B','N','P','k','q','r','b','n','p', ' '};
 	string extension = ".xbm";
     string fileName;
 
     bitmap_width = bitmap_height = 80;
 
-	for (int i = 0; i < 15; ++i) {
+	for (int i = 0; i < 13; ++i) {
         if (tempArray[i] == ' ') {
             fileName = "blank.xbm";
         } else if (tempArray[i] == 'x') {
