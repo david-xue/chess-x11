@@ -13,7 +13,7 @@ void Cell::putPiece(Piece* piece) {
   p = piece;
   if (p) {
       p->update(pos, wcanreach, bcanreach);
-    if(gp)   gp->draw(p->getName(),pos);
+    if(gp) gp->draw(p->getName(),pos);
   }
 }
 
