@@ -13,6 +13,8 @@
 #include "graphdisplay.h"
 #include "rook.h"
 #include "king.h"
+#include "computer.h"
+
 using namespace std;
 
 Piece* newPiece(ChessBoard* const b, const char c, bool player) {
@@ -361,3 +363,7 @@ ostream& operator<< (ostream& out, ChessBoard& b) {
     return out;
 }
 
+void ChessBoard::passPiece(Computer& com, bool colour) {
+ colour ? com.passPiece(white) : com.passPiece(black);
+}
+  
