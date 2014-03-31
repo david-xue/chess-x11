@@ -98,8 +98,8 @@ GraphDisplay::GraphDisplay() {
 	//cout << "window width - " << width << "; height - " << height << endl;
 
     // make the new window 500x500
-    width = 500;
-    height = 500;
+    width = 900;
+    height = 900;
 
 	/* create a simple window, as a direct child of the screen's   */
 	/* root window. Use the screen's white color as the background */
@@ -112,27 +112,31 @@ GraphDisplay::GraphDisplay() {
 	XSync(display, False);
 
 
-    char tempArray [13] = {'K','Q','R','B','N','P','k','q','r','b','n','p', ' '};
+    char tempArray [15] = {'K','Q','R','B','N','P','k','q','r','b','n','p', ' ', 'x', 'y'};
 	string extension = ".xbm";
     string fileName;
 
-    bitmap_width = bitmap_height = 40;
-	for (int i = 0; i < 13; ++i) {
+    bitmap_width = bitmap_height = 80;
+
+	for (int i = 0; i < 15; ++i) {
         if (tempArray[i] == ' ') {
             fileName = "blank.xbm";
+        } else if (tempArray[i] == 'x') {
+            fileName = "xaxis.xbm";
+        } else if (tempArray[i] == 'y') {
+            fileName = "yaxis.xbm";
         } else if (tempArray[i] != toupper(tempArray[i])) {
-			//fileName = tempArray[i] + "black" + extension;
-			fileName = "testingblack.xbm";
+			fileName = tempArray[i];
+            fileName += "black" + extension;
+			//fileName = "testingblack.xbm";
 		} else {
-			//fileName = tempArray[i] + "white" + extension;
-			fileName = "testingwhite.xbm";
+			fileName = tempArray[i];
+            fileName += "white" + extension;
+			//fileName = "testingwhite.xbm";
 		}
 
 		/* this variable will contain the ID of the newly created pixmap.    */
 		Pixmap* bitmap = new Pixmap;
-
-
-
 
 		/* these variables will contain the location of the hotspot of the   */
 		/* loaded bitmap.                                                    */
@@ -147,11 +151,11 @@ GraphDisplay::GraphDisplay() {
 
 		switch (rc) {
 		case BitmapOpenFailed:
-			cerr << "XReadBitmapFile - could not open file.\n";
+			cerr << "XReadBitmapFile - could not open file: " << fileName << endl;
 			exit(1);
 			break;
 		case BitmapFileInvalid:
-			cerr << "XReadBitmapFile - file '%s' doesn't contain a valid bitmap.\n";
+			cerr << "XReadBitmapFile - file " << fileName << " doesn't contain a valid bitmap.\n";
 			exit(1);
 			break;
 		case BitmapNoMemory:
@@ -162,8 +166,17 @@ GraphDisplay::GraphDisplay() {
 	    imageMap[tempArray[i]] = bitmap;
 
         XSync(display,false);
-        
+        //usleep(1);        
 	}
+/*    usleep(4);
+    XCopyPlane(display, *(imageMap.at('x')), win, gc, 0, 0, 640,
+				30, 30, 0, 1);
+	XSync(display, False);
+    XCopyPlane(display, *(imageMap.at('y')), win, gc, 0, 0, 30,
+                640, 0, 30, 1);
+    XSync(display, False);
+*/
+
 }
 
 GraphDisplay::~GraphDisplay() {
@@ -184,12 +197,12 @@ GraphDisplay::~GraphDisplay() {
 }
 
 void GraphDisplay::draw (char piece, Posn pos) { 
-	int y = pos.row * bitmap_height + 10;
-	int x = pos.col * bitmap_width + 10;
+	int y = pos.row * bitmap_height + 40;
+	int x = pos.col * bitmap_width + 40;
 	try {
 		XCopyPlane(display, *(imageMap.at(piece)), win, gc, 0, 0, bitmap_width,
 				bitmap_height, x, y, 1);
-		XSync(display, False);
+		XSync(display, false);
 		//usleep(4);
 	} catch (const out_of_range& except) {
 		cerr << "out of range error: " << except.what() << endl;
@@ -197,8 +210,8 @@ void GraphDisplay::draw (char piece, Posn pos) {
 }
 
 void GraphDisplay::undraw(Posn pos) {
-    int y = pos.row * bitmap_height + 10;
-	int x = pos.col * bitmap_width + 10;
+    int y = pos.row * bitmap_height + 40;
+	int x = pos.col * bitmap_width + 40;
 	char blank = ' ';
     try {
 	    XCopyPlane(display, *(imageMap.at(blank)), win, gc, 0, 0, bitmap_width,
