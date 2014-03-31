@@ -32,7 +32,7 @@ Image::Image(int width, int height, int hotspot_x, int hotspot_y, string sfileNa
 
 void Image::drawImage (int x, int y) {
     Display *display = xwin->getDisplay();
-    Window root_win = DefaultRootWindow(display);
+    //Window root_win = DefaultRootWindow(display);
     
     if (bitmap != NULL) {
         XFreePixmap(display, *bitmap);
@@ -40,11 +40,11 @@ void Image::drawImage (int x, int y) {
     }
     bitmap = new Pixmap;
 
-    GC gc = XCreateGC(display, *bitmap, 0,(XGCValues *)0);
+//    GC gc = XCreateGC(display, *bitmap, 0,(XGCValues *)0);
 
-    XReadBitmapFile(display, root_win, fileName, &bitmap_width, &bitmap_height, bitmap, &hotspot_x, &hotspot_y);
+    XReadBitmapFile(display, *(xwin->getWindow()), fileName, &bitmap_width, &bitmap_height, bitmap, &hotspot_x, &hotspot_y);
 
-    XCopyPlane(display, *bitmap, root_win, gc, 0, 0, bitmap_width, bitmap_height, x, y, 1);
+    XCopyPlane(display, *bitmap, *(xwin->getWindow()), *(xwin->getGC()), 0, 0, bitmap_width, bitmap_height, x, y, 1);
 }
 
 Image::~Image () {
