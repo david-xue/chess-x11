@@ -23,8 +23,8 @@ class ChessBoard {
 
   void update();//move calls this to update all cells' status
   bool check(bool);//move will call this to determine if the player is being checked
-  bool checkmate(bool);//same as above
-  bool stalemate(bool);//same
+  bool stalemate(bool);//same as above
+  bool checkmate(bool);
 
  public:
   ChessBoard();
