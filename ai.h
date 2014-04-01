@@ -10,6 +10,7 @@ Move bestMove(bool, const ChessBoard&);
 
 int assess(bool, const ChessBoard&);
 */
-std::vector<Posn>* legalMove(ChessBoard&, const Posn);
+
+std::vector<Posn> legalMove(ChessBoard&, const Posn);
 
 #endif 

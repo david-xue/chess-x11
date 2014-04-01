@@ -78,6 +78,6 @@ void King::update(const Posn p, bool white, bool black) {
  }    
  moved = res;
  pos = p;
- isThreatened = owner ? black : white;                                                                                              
+ isThreatened = owner ? black : white;
  isCovered = owner ? white : black;                                                                                                 
 }
