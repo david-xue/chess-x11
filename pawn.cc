@@ -34,11 +34,11 @@ int Pawn::canReach(const Posn posn) {
     else return 0;
    }
    else if (posn.row == pos.row - 1) 
-    return o ? 0 : (posn.row == 0 ? 3 : 1);
+    return o ? 0 : (posn.row == 0 && prom == 0 ? 3 : 1);
   }
   if (abs(posn.col - pos.col) == 1) {
    if (posn.row == pos.row - 1) {
-    return o ? (posn.row == 0 ? 3 : 1) : isenPassant(posn);
+    return o ? (posn.row == 0 && prom == 0 ? 3 : 1) : isenPassant(posn);
    }
    else return 0;
   }
@@ -46,11 +46,11 @@ int Pawn::canReach(const Posn posn) {
  else {
   if (posn.col == pos.col) {
    if (posn.row == pos.row + 2) {
-    if (!moved) return o ? 0 : (posn.row == 7 ? 3 : 1);
+    if (!moved) return o ? 0 : (posn.row == 7 && prom == 0 ? 3 : 1);
     else return 0;
    }
    else if (posn.row == pos.row + 1) 
-    return o ? 0 : (posn.row == 7 ? 3 : 1);
+    return o ? 0 : (posn.row == 7 && prom == 0 ? 3 : 1);
   }
   if (abs(posn.col - pos.col) == 1) {
    if (posn.row == pos.row + 1) {
