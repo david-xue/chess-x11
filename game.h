@@ -13,7 +13,6 @@ class Game {
   int whitescore;
   int blackscore;
   bool selfSetup;
-  bool AIvsAI;
   void displayScore();
   void saveRecord();
   void endGame(int);

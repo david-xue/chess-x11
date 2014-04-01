@@ -11,7 +11,7 @@
 
 using namespace std;
 
-Game::Game() : board(new ChessBoard()), white(NULL), black(NULL), whitescore(0), blackscore(0), selfSetup(false), AIvsAI(false) {}
+Game::Game() : board(new ChessBoard()), white(NULL), black(NULL), whitescore(0), blackscore(0), selfSetup(false) {}
 
 Game::~Game() {
     delete board;
@@ -24,12 +24,10 @@ void Game::initializePlayer (bool isWhite, const int humanAI) {
         if (isWhite) {
             white = new Human(board, isWhite);
         } else {
-            if (AIvsAI) AIvsAI = false;
             black = new Human(board, isWhite);
         }
     } else {
         if (isWhite) {
-            AIvsAI = true;
             white = new Computer(board, isWhite, humanAI);
         } else {
             black = new Computer(board, isWhite, humanAI);
@@ -56,7 +54,6 @@ void Game::newGame(const int whitePlayer, const int blackPlayer) {
         int result;
         try {
             if (currentPlayer == NULL) cout << "WTF" << endl;
-            if (AIvsAI) sleep(1);
             result = currentPlayer->move();
         } catch (string &s) {
             // out of moves
