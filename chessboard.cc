@@ -222,7 +222,8 @@ int ChessBoard::move(const Posn orig, const Posn dest) {
 
 void ChessBoard::undo() {
  if (record->empty()) return;
- Move m = record->back();
+ const Move m = record->back();
+ tp->notify(m, true);
  record->pop_back();
  Cell* co = board[m.orig.row][m.orig.col];
  Cell* cd = board[m.dest.row][m.dest.col];
@@ -246,6 +247,7 @@ void ChessBoard::undo() {
   board[m.orig.row][m.dest.col]->putPiece(m.enpassant);
  }
  update();
+ cout << *tp;
  blackmove = !blackmove;
  turn -= 1;
 }
