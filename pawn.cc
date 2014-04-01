@@ -25,7 +25,7 @@ void Pawn::promote(Piece* p) {
 } 
  
 int Pawn::canReach(const Posn posn) {
- if (prom) return prom->move(posn);
+ if (prom) return prom->canReach(posn);
  int o = board->isOccupied(posn, owner);
  if (owner) {
   if (posn.col == pos.col) {
@@ -63,6 +63,7 @@ int Pawn::canReach(const Posn posn) {
 }
 
 int Pawn::isenPassant(const Posn posn) {
+ if (prom) return 0;
  Posn p (pos.row, posn.col);
  if (board->getRecord()->size() == 0) return 0;
  Move m = (board->getRecord())->back();
