@@ -12,7 +12,7 @@ public:
   int canReach(const Posn);
   int move(const Posn);
   int val();
-  void update(const Posn, bool, bool);
+  void update(const Posn, std::vector<Piece*>, std::vector<Piece*>);
 };
 
 #endif

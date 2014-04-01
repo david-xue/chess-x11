@@ -75,7 +75,7 @@ int Computer::move() {
     else m = random();
    }
   }
-  bool res = board->move(m.orig, m.dest, true, true);
+  int res = board->move(m.orig, m.dest, true, true);
   if (res == 4) return 0;
   else if (res == 3) return 3;
   else return 1;

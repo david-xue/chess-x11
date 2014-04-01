@@ -14,6 +14,7 @@
 #include "rook.h"
 #include "king.h"
 #include "computer.h"
+#include "ai.h"
 
 using namespace std;
 
@@ -142,22 +143,23 @@ void ChessBoard::setup() {
   }
   if (comm == "done") break;
  } while (true);
+ update();
 }
 
 void ChessBoard::update() {
  for (int n = 0; n < 8; n++) {
   for (int m = 0; m < 8; m++) {
    Posn p(n, m);
-   bool w, b = false;
+   vector<Piece*> w, b;
    for (int l = 0; l < 16; l++) {
     Posn p1 = white[l]->getPosn();
     Posn p2 = black[l]->getPosn();
     if (!(p == p1) && (p1.row >= 0) && white[l]->canReach(p)) {
-     w = true;
-    // cout << white[l]->getName() << " can reach " << n << m << endl;
+     w.push_back(white[l]);
+   // cout << white[l]->getName() << " can reach " << n << m << endl;
     }
     if (!(p == p2) && (p2.row >= 0) && black[l]->canReach(p)) {
-     b = true;
+     b.push_back(black[l]);
     // cout << black[l]->getName() << " can reach " << n << m << endl;
     }
    }
@@ -193,12 +195,14 @@ int ChessBoard::move(const Posn orig, const Posn dest, bool display, bool comput
     if (computer) {
      Pawn* pawn = static_cast<Pawn*>(p);
      pawn->promote(newPiece(this, (blackmove ? 'q' : 'Q'), pawn->getOwner()));
+     gp->draw(pawn->getName(), pawn->getPosn());
     } else {
      char c;
      cout << "Promotion: enter the piece you want." << endl;
      cin >> c;
      Pawn* pawn = static_cast<Pawn*>(p);
      pawn->promote(newPiece(this, c, pawn->getOwner()));
+     gp->draw(pawn->getName(), pawn->getPosn());
     }
     m.promotion = true;
    }
@@ -209,8 +213,10 @@ int ChessBoard::move(const Posn orig, const Posn dest, bool display, bool comput
    turn += 1;
    record->push_back(m);
    update();
-   tp->notify(m);
-   if (display) cout << *tp;
+   if (display) {
+     tp->notify(m);
+     cout << *tp;
+   }
    if (check(blackmove)) {
     if (checkmate(blackmove)) {
      return 3;
@@ -236,7 +242,7 @@ int ChessBoard::move(const Posn orig, const Posn dest, bool display, bool comput
 void ChessBoard::undo(bool display) {
  if (record->empty()) return;
  const Move m = record->back();
- tp->notify(m, true);
+ if (display) tp->notify(m, true);
  record->pop_back();
  Cell* co = board[m.orig.row][m.orig.col];
  Cell* cd = board[m.dest.row][m.dest.col];
@@ -307,9 +313,9 @@ int ChessBoard::isOccupied(const Posn posn, bool player) {
 
 bool ChessBoard::isAttacked(const Posn posn, bool opponent) {
     if (opponent) {
-        return board[posn.row][posn.col]->getWhiteReach();
+        return board[posn.row][posn.col]->getWhiteReach().size();
     } else {
-        return board[posn.row][posn.col]->getBlackReach();
+        return board[posn.row][posn.col]->getBlackReach().size();
     }
 }
 
@@ -319,21 +325,22 @@ bool ChessBoard::isWhiteMove() {
 
 bool ChessBoard::check(bool player) {
  if (!player) {
-  return white[0]->getThreats();
+  return white[0]->getThreats().size();
  } else {
-  return black[0]->getThreats();
+  return black[0]->getThreats().size();
  }
 }
 
 bool ChessBoard::checkmate(bool player) {
  bool res = true;
- Piece * king = !player ? white[0] : black[0];
- for (int n = 0; n < 8; n++) {
-  for (int m = 0; m < 8; m++) {
-   if (king->move(Posn(n, m))) {
-    res = false;
-    break;
-   }
+ for (int n = 0; n < 16; n++) {
+  Piece* pc = !player ? white[n] : black[n];
+  Posn p = pc->getPosn();
+  if (p.row < 0) continue;
+  vector<Posn> v = legalMove(*this, p);
+  if (v.size()) {
+   res = false;
+   break;
   }
  }
  return res;

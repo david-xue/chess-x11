@@ -2,6 +2,8 @@
 #include "cell.h"
 #include "piece.h"
 #include "graphdisplay.h"
+using namespace std;
+
 Cell::Cell(Posn p, GraphDisplay* gp): pos(p), p(NULL),gp(gp) {}
 
 Piece* Cell::getPiece() {
@@ -19,22 +21,23 @@ void Cell::putPiece(Piece* piece, bool updateScreen) {
 
 Piece* Cell::takeoff(bool updateScreen) {
  Piece* temp = p;
+ vector<Piece*> v;
  p = 0;
 if (gp && updateScreen) gp->undraw(pos);
  Posn n (-1, -1);
- if (temp) temp->update(n, false, false);
+ if (temp) temp->update(n, v, v);
  return temp;
 }
 
-bool Cell::getWhiteReach() {
+vector<Piece*> Cell::getWhiteReach() {
  return wcanreach;
 }
 
-bool Cell::getBlackReach() {
+vector<Piece*> Cell::getBlackReach() {
  return bcanreach;
 }
 
-void Cell::update(bool white, bool black) {
+void Cell::update(vector<Piece*> white, vector<Piece*> black) {
  wcanreach = white;
  bcanreach = black;
  if (p) p->update(pos, wcanreach, bcanreach);

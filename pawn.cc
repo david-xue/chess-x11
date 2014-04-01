@@ -22,6 +22,7 @@ char Pawn::getName() {
 
 void Pawn::promote(Piece* p) {
  prom = p;
+ owner ? p->update(pos, isCovered, isThreatened) : p->update(pos, isThreatened, isCovered);
 } 
  
 int Pawn::canReach(const Posn posn) {
@@ -86,7 +87,7 @@ void Pawn::unpromote() {
  prom = 0;
 }
 
-void Pawn::update(const Posn p, bool white, bool black) {
+void Pawn::update(const Posn p, vector<Piece*> white, vector<Piece*> black) {
  vector<Move>* record = board->getRecord();
  bool res = false;
  if (record->size()) {

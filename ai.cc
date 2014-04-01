@@ -33,11 +33,11 @@ int threats(ChessBoard& b, bool player) {
  int res;
  if (player) {
   for (int n = 1; n < 16; n++) {
-   if (b.white[n]->getThreats() && !b.white[n]->getCovers()) res += 1;
+   if (b.white[n]->getThreats().size() && b.white[n]->getCovers().size() == 0) res += 1;
   }
  } else {
   for (int n = 1; n < 16; n++) {
-   if (b.black[n]->getThreats() && !b.black[n]->getCovers()) res += 1;
+   if (b.black[n]->getThreats().size() && b.black[n]->getCovers().size() == 0) res += 1;
   }
  }
  return res;

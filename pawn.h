@@ -11,7 +11,7 @@ class Pawn: public Piece {
   Pawn(ChessBoard*, char, bool);
   int canReach(const Posn);  
   ~Pawn();
-  void update(const Posn, bool, bool);
+  void update(const Posn, std::vector<Piece*>, std::vector<Piece*>);
   int val();
   char getName();
   void promote(Piece*);
