@@ -30,7 +30,13 @@ int Pawn::canReach(const Posn posn) {
  if (owner) {
   if (posn.col == pos.col) {
    if (posn.row == pos.row - 2) {
-    if (!moved) return o ? 0 : 1;
+    if (!moved) {
+        if (board->isOccupied(Posn(pos.row-1,posn.col), owner) == 0) {
+            return o ? 0 : 1;
+        } else {
+            return 0;
+        }
+    }
     else return 0;
    }
    else if (posn.row == pos.row - 1) 
@@ -46,6 +52,7 @@ int Pawn::canReach(const Posn posn) {
  else {
   if (posn.col == pos.col) {
    if (posn.row == pos.row + 2) {
+    if (board->isOccupied(Posn(pos.row+1, posn.col), owner)) return 0;
     if (!moved) return o ? 0 : (posn.row == 7 && prom == 0 ? 3 : 1);
     else return 0;
    }
