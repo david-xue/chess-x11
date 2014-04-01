@@ -17,3 +17,14 @@ vector<Posn> legalMove(ChessBoard& b, const Posn p) {
  }
  return vec;
 }
+
+//vector<Posn> howtocap(ChessBoard& b, const Posn me, const Posn target) {
+
+int gain(ChessBoard& b, bool player) {
+ int x,y;
+ for (int n = 0; n < 16; n++) {
+  if (b.white[n]->getPosn().row >= 0) x += b.white[n]->val();
+  if (b.black[n]->getPosn().row >= 0) y += b.black[n]->val();
+ }
+ return player ? x - y : y - x;
+} 

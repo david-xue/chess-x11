@@ -8,15 +8,16 @@
 #include <cstdlib>
 #include "piece.h"
 #include <time.h>
+#include "cell.h"
 using namespace std;
 
 Computer::Computer (ChessBoard* b, bool isWhite, int lvl) : 
- Player(b, isWhite), AILevel(lvl) {
- b->passPiece(*this, isWhite);
+ Player(b, isWhite), AILevel(lvl), legalMoves(new vector<Move>) {
+ b->giveaway(*this);
  srand(time(NULL));
 }
 
-void Computer::passPiece(Piece* p1[], Piece* p2[]) {
+void Computer::receive(Piece* p1[], Piece* p2[]) {
  for (int n = 0; n < 16; n++) {
   if (isWhite) {
    own[n] = p1[n];
@@ -46,24 +47,69 @@ vector<Move>* Computer::alllegalMove() {
  return vec;
 }
 
-int Computer::move() {
-  if (AILevel == 1) return random();
-  else return 0;
+Move Computer::random() {
+ int x = rand() % legalMoves->size();
+ return legalMoves->at(x);
 }
 
-int Computer::random() {
- vector<Move>* move = alllegalMove();
- if (move->size() == 0) return 0;
- else {
-  int x = rand() % move->size();
-  bool res = board->move(move->at(x).orig, move->at(x).dest);
+Move Computer::random(vector<Move> m) {
+ int x = rand() % m.size();
+ return m.at(x);
+}
+
+
+int Computer::move() {
+  delete legalMoves;
+  legalMoves = alllegalMove();
+  if (legalMoves->size() == 0) return 0;
+  Move m;
+  if (AILevel == 1) {
+   m = random();
+  }
+  if (AILevel == 2) {
+   vector<Move> moves = checkingmove();
+   if (moves.size()) m = random(moves);
+   else {
+    moves = captures();
+    if (moves.size()) m = random(moves);
+    else m = random();
+   }
+  }
+  bool res = board->move(m.orig, m.dest);
   if (res == 4) return 0;
   else if (res == 3) return 3;
   else return 1;
- }
 }
-  
 
- 
+vector<Move> Computer::captures() {
+ vector<Move> m;
+ for (vector<Move>::iterator i = legalMoves->begin(); i != legalMoves->end(); i++) {
+  int x = gain(*board, isWhite);
+  board->move(i->orig, i->dest, false);
+  int y = gain(*board, isWhite);
+  if (y > x) m.push_back(*i);
+  board->undo(false);
+ }
+ return m;
+}
 
+vector<Move> Computer::checkingmove() {
+ vector<Move> m;
+  for (vector<Move>::iterator i = legalMoves->begin(); i != legalMoves->end(); i++) {
+  board->move(i->orig, i->dest, false);
+  if (opp[0]->getThreats()) m.push_back(*i);
+  board->undo(false);
+ }
+ return m;
+}
+
+vector<Move> Computer::capturingmove() {
+  vector<Move> m;
+  for (vector<Move>::iterator i = legalMoves->begin(); i != legalMoves->end(); i++) {
+  board->move(i->orig, i->dest, false);
+  if (opp[0]->getThreats()) m.push_back(*i);
+  board->undo(false);
+ }
+ return m;
+}
 

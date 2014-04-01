@@ -40,10 +40,10 @@ class ChessBoard {
  //     updates the status of cells
  //     notifies display; add this move to the record; determine if there is a check/checkmate/stalemate
  //     returns 0 if illegal; 1 if legal; 2 if check; 3 if checkmate; 4 if stalemate
-  int move(const Posn, const Posn);
+  int move(const Posn, const Posn, bool display = true);
  //isOccupied returns 0 if not occupied, 1 if occupied by your own piece, 2 if by opponent's
   int isOccupied(const Posn, bool);
-  void undo();
+  void undo(bool display = true);
   void setAlert(bool);//set alerting mode; can be set on only when human player vs computer
   std::vector<Move>* getRecord();
   bool isExposed(const Posn, const Posn, bool); //pieces will call this to determine if their moves get their king exposed
@@ -52,7 +52,7 @@ class ChessBoard {
   bool isAttacked(const Posn, bool);
   // returns true if white goes next, false if black goes next
   bool isWhiteMove();
-  void passPiece(Computer&, bool);
+  void giveaway(Computer&);
 
  //friend functions for display and AI:
   friend std::ostream& operator<<(std::ostream&, ChessBoard&);
@@ -67,8 +67,8 @@ class ChessBoard {
  //safeMove returns all legal moves to cells that is not threatened
   friend std::vector<Posn> safeMove(const Posn);
  //howtocap returns the next move needed to capture the piece
-  friend std::vector<Posn> howtocap(const Posn me, const Posn target);
-
+  friend std::vector<Posn> howtocap(ChessBoard&, const Posn me, const Posn target);
+  friend int gain(ChessBoard&, bool);
 };
 
 #endif

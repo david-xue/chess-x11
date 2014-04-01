@@ -166,7 +166,7 @@ void ChessBoard::update() {
  }
 }
 
-int ChessBoard::move(const Posn orig, const Posn dest) {
+int ChessBoard::move(const Posn orig, const Posn dest, bool display) {
   Cell* co = board[orig.row][orig.col];
   Cell* cd = board[dest.row][dest.col];
   Piece* p = co->getPiece();
@@ -205,7 +205,7 @@ int ChessBoard::move(const Posn orig, const Posn dest) {
    record->push_back(m);
    update();
    tp->notify(m);
-   cout << *tp;
+   if (display) cout << *tp;
    if (check(blackmove)) {
     if (checkmate(blackmove)) {
      return 3;
@@ -220,7 +220,7 @@ int ChessBoard::move(const Posn orig, const Posn dest) {
   return 0;
 }
 
-void ChessBoard::undo() {
+void ChessBoard::undo(bool display) {
  if (record->empty()) return;
  const Move m = record->back();
  tp->notify(m, true);
@@ -247,7 +247,7 @@ void ChessBoard::undo() {
   board[m.orig.row][m.dest.col]->putPiece(m.enpassant);
  }
  update();
- cout << *tp;
+ if (display) cout << *tp;
  blackmove = !blackmove;
  turn -= 1;
 }
@@ -367,7 +367,7 @@ ostream& operator<< (ostream& out, ChessBoard& b) {
     return out;
 }
 
-void ChessBoard::passPiece(Computer& com, bool colour) {
- com.passPiece(white, black);
+void ChessBoard::giveaway(Computer& com) {
+ com.receive(white, black);
 }
   

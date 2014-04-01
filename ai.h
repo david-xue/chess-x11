@@ -13,4 +13,6 @@ int assess(bool, const ChessBoard&);
 
 std::vector<Posn> legalMove(ChessBoard&, const Posn);
 
+int gain(ChessBoard&, bool);
+//std::vector<Posn> howtocap(ChessBoard&, const Posn me, const Posn target);
 #endif 
