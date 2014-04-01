@@ -40,7 +40,7 @@ class ChessBoard {
  //     updates the status of cells
  //     notifies display; add this move to the record; determine if there is a check/checkmate/stalemate
  //     returns 0 if illegal; 1 if legal; 2 if check; 3 if checkmate; 4 if stalemate
-  int move(const Posn, const Posn, bool display = true);
+  int move(const Posn, const Posn, bool display = true, bool computer = false);
  //isOccupied returns 0 if not occupied, 1 if occupied by your own piece, 2 if by opponent's
   int isOccupied(const Posn, bool);
   void undo(bool display = true);
@@ -69,6 +69,8 @@ class ChessBoard {
  //howtocap returns the next move needed to capture the piece
   friend std::vector<Posn> howtocap(ChessBoard&, const Posn me, const Posn target);
   friend int gain(ChessBoard&, bool);
+ //return number of threats to player's uncovered pieces
+  friend int threats(ChessBoard&, bool);
 };
 
 #endif

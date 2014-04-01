@@ -27,4 +27,19 @@ int gain(ChessBoard& b, bool player) {
   if (b.black[n]->getPosn().row >= 0) y += b.black[n]->val();
  }
  return player ? x - y : y - x;
-} 
+}
+
+int threats(ChessBoard& b, bool player) {
+ int res;
+ if (player) {
+  for (int n = 1; n < 16; n++) {
+   if (b.white[n]->getThreats() && !b.white[n]->getCovers()) res += 1;
+  }
+ } else {
+  for (int n = 1; n < 16; n++) {
+   if (b.black[n]->getThreats() && !b.black[n]->getCovers()) res += 1;
+  }
+ }
+ return res;
+}
+

@@ -75,7 +75,7 @@ int Computer::move() {
     else m = random();
    }
   }
-  bool res = board->move(m.orig, m.dest);
+  bool res = board->move(m.orig, m.dest, true, true);
   if (res == 4) return 0;
   else if (res == 3) return 3;
   else return 1;
@@ -85,7 +85,7 @@ vector<Move> Computer::captures() {
  vector<Move> m;
  for (vector<Move>::iterator i = legalMoves->begin(); i != legalMoves->end(); i++) {
   int x = gain(*board, isWhite);
-  board->move(i->orig, i->dest, false);
+  board->move(i->orig, i->dest, false, true);
   int y = gain(*board, isWhite);
   if (y > x) m.push_back(*i);
   board->undo(false);
@@ -96,20 +96,32 @@ vector<Move> Computer::captures() {
 vector<Move> Computer::checkingmove() {
  vector<Move> m;
   for (vector<Move>::iterator i = legalMoves->begin(); i != legalMoves->end(); i++) {
-  board->move(i->orig, i->dest, false);
-  if (opp[0]->getThreats()) m.push_back(*i);
-  board->undo(false);
+  int res = board->move(i->orig, i->dest, false, true);
+  if (res == 3) {
+   board->undo(false);
+   vector<Move> checkmate;
+   checkmate.push_back(*i);
+   return checkmate;
+  }
+  else {
+   m.push_back(*i);
+   board->undo(false);
+  }
  }
  return m;
 }
 
 vector<Move> Computer::capturingmove() {
-  vector<Move> m;
+  vector<Move> capturing;
+  vector<Move> fork;
   for (vector<Move>::iterator i = legalMoves->begin(); i != legalMoves->end(); i++) {
-  board->move(i->orig, i->dest, false);
-  if (opp[0]->getThreats()) m.push_back(*i);
+  int state = threats(*board, !isWhite);
+  board->move(i->orig, i->dest, false, true);
+  int res = threats(*board, !isWhite);
+  if (res - state >= 2) fork.push_back(*i);
+  if (res - state == 1) capturing.push_back(*i);
   board->undo(false);
  }
- return m;
+ return fork.size() ? fork : capturing;
 }
 

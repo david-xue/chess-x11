@@ -166,7 +166,7 @@ void ChessBoard::update() {
  }
 }
 
-int ChessBoard::move(const Posn orig, const Posn dest, bool display) {
+int ChessBoard::move(const Posn orig, const Posn dest, bool display, bool computer) {
   Cell* co = board[orig.row][orig.col];
   Cell* cd = board[dest.row][dest.col];
   Piece* p = co->getPiece();
@@ -176,29 +176,34 @@ int ChessBoard::move(const Posn orig, const Posn dest, bool display) {
   int res = p->move(dest);
   if (res == 0) return 0;
   else {
-   Move m = {p, cd->takeoff(), orig, dest, false, false, 0};
-   co->takeoff();
-   cd->putPiece(p);
+   Move m = {p, cd->takeoff(display), orig, dest, false, false, 0};
+   co->takeoff(display);
+   cd->putPiece(p, display);
   if (res == 2) {
         m.castling = true;
         if (orig.col < dest.col) {
-         Piece* rook = board[orig.row][7]->takeoff();
-         board[orig.row][5]->putPiece(rook);
+         Piece* rook = board[orig.row][7]->takeoff(display);
+         board[orig.row][5]->putPiece(rook, display);
         } else {
-         Piece* rook = board[orig.row][0]->takeoff();
-         board[orig.row][5]->putPiece(rook);
+         Piece* rook = board[orig.row][0]->takeoff(display);
+         board[orig.row][5]->putPiece(rook, display);
         }
     }
    if (res == 3) {
-    char c;
-    cout << "Promotion: enter the piece you want." << endl;
-    cin >> c;
-    Pawn* pawn = static_cast<Pawn*>(p);
-    pawn->promote(newPiece(this, c, pawn->getOwner()));
+    if (computer) {
+     Pawn* pawn = static_cast<Pawn*>(p);
+     pawn->promote(newPiece(this, (blackmove ? 'q' : 'Q'), pawn->getOwner()));
+    } else {
+     char c;
+     cout << "Promotion: enter the piece you want." << endl;
+     cin >> c;
+     Pawn* pawn = static_cast<Pawn*>(p);
+     pawn->promote(newPiece(this, c, pawn->getOwner()));
+    }
     m.promotion = true;
    }
    if (res == 4) {
-    m.enpassant = board[orig.row][dest.col]->takeoff();
+    m.enpassant = board[orig.row][dest.col]->takeoff(display);
    }
    blackmove = !blackmove;
    turn += 1;
@@ -213,6 +218,14 @@ int ChessBoard::move(const Posn orig, const Posn dest, bool display) {
     else return 2;
    }
    else if (stalemate(blackmove)) return 4;
+   bool twokings = true;
+   for (int n = 1; n < 16; n++) {
+    if (white[n]->getPosn().row >= 0 || black[n]->getPosn().row >= 0) {
+    twokings = false;
+    break;
+    }
+   }
+   if (twokings) return 4;
    else return 1;
   }
   // shouldn't get here...
@@ -227,24 +240,24 @@ void ChessBoard::undo(bool display) {
  record->pop_back();
  Cell* co = board[m.orig.row][m.orig.col];
  Cell* cd = board[m.dest.row][m.dest.col];
- cd->putPiece(m.captured);
- co->putPiece(m.mover);
+ cd->putPiece(m.captured, display);
+ co->putPiece(m.mover, display);
  if (m.promotion) {
   Pawn* pawn = static_cast<Pawn*>(m.mover);
   pawn->unpromote();
  }
  if (m.castling) {
   if (m.orig.col < m.dest.col) {
-    Piece* rook = board[m.orig.row][5]->takeoff();
-    board[m.orig.row][7]->putPiece(rook);
+    Piece* rook = board[m.orig.row][5]->takeoff(display);
+    board[m.orig.row][7]->putPiece(rook, display);
   }
   else {
-   Piece* rook = board[m.orig.row][3]->takeoff();
-   board[m.orig.row][0]->putPiece(rook);
+   Piece* rook = board[m.orig.row][3]->takeoff(display);
+   board[m.orig.row][0]->putPiece(rook, display);
   }
  }
  if (m.enpassant) {
-  board[m.orig.row][m.dest.col]->putPiece(m.enpassant);
+  board[m.orig.row][m.dest.col]->putPiece(m.enpassant, display);
  }
  update();
  if (display) cout << *tp;
@@ -344,20 +357,19 @@ bool ChessBoard::stalemate(bool player) {
   }
  }
  } else {
- for (int n = 0; n < 16; n++) {                                                                                                                                      
-  if (res == false) break;                                                                                                                                           
+ for (int n = 0; n < 16; n++) {
+  if (res == false) break;
   if (black[n]->getPosn().row >= 0) {
-   for (int r = 0; r < 8; r++) {                                                                                                                                     
-    if (res == false) break;                                                                                                                                         
-    for (int c = 0; c < 8; c++) {                                                                                                                                    
+   for (int r = 0; r < 8; r++) {
+    if (res == false) break;
+    for (int c = 0; c < 8; c++) {
      if (black[n]->move(Posn(r, c))) {
-      res = false;                                                                                                                                                   
-      break;                                                                                                                                                         
-     }                                                                                                                                                               
-    }                                                                                                                                                                
-   }                                                                                                                                                                 
-  }                                                                                                                                                                  
- }                                                                                                                                                        
+      res = false;                                                                    break;
+     }
+    }
+   }
+  }
+ }
  }
  return res;
 }
