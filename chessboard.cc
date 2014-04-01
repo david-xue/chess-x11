@@ -226,7 +226,6 @@ void ChessBoard::undo() {
  record->pop_back();
  Cell* co = board[m.orig.row][m.orig.col];
  Cell* cd = board[m.dest.row][m.dest.col];
- cd->takeoff(); //takeoff before putpiece
  cd->putPiece(m.captured);
  co->putPiece(m.mover);
  if (m.promotion) {
