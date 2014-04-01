@@ -162,6 +162,7 @@ void ChessBoard::update() {
     }
    }
    board[n][m]->update(w, b);
+   cout << board[0][4]->getPiece()->getThreats() << endl;
   }
  }
 }
@@ -305,7 +306,7 @@ bool ChessBoard::isWhiteMove() {
 }
 
 bool ChessBoard::check(bool player) {
- if (player) {
+ if (!player) {
   return white[0]->getThreats();
  } else {
   return black[0]->getThreats();
@@ -314,7 +315,7 @@ bool ChessBoard::check(bool player) {
 
 bool ChessBoard::checkmate(bool player) {
  bool res = true;
- Piece * king = player ? white[0] : black[0];
+ Piece * king = !player ? white[0] : black[0];
  for (int n = 0; n < 8; n++) {
   for (int m = 0; m < 8; m++) {
    if (king->move(Posn(n, m))) {
