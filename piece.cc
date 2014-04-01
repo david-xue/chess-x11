@@ -23,6 +23,10 @@ bool Piece::getThreats() {
  return isThreatened;
 }
 
+bool Piece::getCovers() {
+ return isCovered;
+}
+
 void Piece::update(const Posn p, bool white, bool black) {
  pos = p;
  isThreatened = owner ? black : white;

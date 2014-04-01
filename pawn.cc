@@ -25,6 +25,7 @@ void Pawn::promote(Piece* p) {
 } 
  
 int Pawn::canReach(const Posn posn) {
+ if (prom) return prom->move(posn);
  int o = board->isOccupied(posn, owner);
  if (owner) {
   if (posn.col == pos.col) {
@@ -84,7 +85,8 @@ void Pawn::update(const Posn p, bool white, bool black) {
   for (vector<Move>::reverse_iterator i = record->rbegin(); i != record->rend(); i++) {
    if (i->mover == this) {
     res = true;
-    break;                                                                                                                                                 }                                                                                                                                                      }        
+    break;                                                                         }
+  }
  }
  moved = res; 
  pos = p;

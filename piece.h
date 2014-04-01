@@ -20,6 +20,7 @@ class Piece {
   int move(const Posn);//return 0 if illegal; 1 if legal; 2 if castling; 3 if can be promoted; 4 if en passant
   virtual char getName();
   bool getThreats();
+  bool getCovers();
   bool getOwner();
   Posn getPosn();
  //update the status; the second arg is the new threat status and the last is cover status
