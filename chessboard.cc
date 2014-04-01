@@ -162,7 +162,6 @@ void ChessBoard::update() {
     }
    }
    board[n][m]->update(w, b);
-   cout << board[0][4]->getPiece()->getThreats() << endl;
   }
  }
 }
@@ -369,6 +368,6 @@ ostream& operator<< (ostream& out, ChessBoard& b) {
 }
 
 void ChessBoard::passPiece(Computer& com, bool colour) {
- colour ? com.passPiece(white) : com.passPiece(black);
+ com.passPiece(white, black);
 }
   
