@@ -16,14 +16,17 @@ int Human::move() {
     string s;
     while (getline(cin,s)) {
         int result = readLine(s);
-        if (result > 0) {
-            if (result == 4) {
-                //draw
-                return 0;
-            } else {
-                return result;
-            }
-        }   
+        //if not undo
+        if (result != 5) {
+            if (result > 0) {
+                if (result == 4) {
+                    //draw
+                    return 0;
+                } else {
+                    return result;
+                }
+            }   
+        }
     }
     string err = "out of moves";
     throw err;
@@ -33,7 +36,7 @@ int Human::move() {
     }
 }
 
-// 0 if illegal, 1 if legal non ending move, 2 if resign, 3 if checkmate, 4 if draw
+// 0 if illegal, 1 if legal non ending move, 2 if resign, 3 if checkmate, 4 if draw, 5 if undo
 int Human::readLine(string s) {
     istringstream ss(s);
     string cmd, cmd2, cmd3;
@@ -77,7 +80,7 @@ int Human::readLine(string s) {
             return 2;
         } else if (cmd == "undo") {
             board->undo();
-            return 1;
+            return 5;
         } else {
             cout << "Bad input on command" << endl;
             return 0;
