@@ -7,11 +7,13 @@
 #include <vector>
 #include <cstdlib>
 #include "piece.h"
+#include <time.h>
 using namespace std;
 
 Computer::Computer (ChessBoard* b, bool isWhite, int lvl) : 
  Player(b, isWhite), AILevel(lvl) {
  b->passPiece(*this, isWhite);
+ srand(time(NULL));
 }
 
 void Computer::passPiece(Piece* p1[], Piece* p2[]) {
