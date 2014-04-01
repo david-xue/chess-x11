@@ -25,6 +25,7 @@ Piece* newPiece(ChessBoard* const b, const char c, bool player) {
  if (c == 'n' || c == 'N') return new Knight(b, c, player);
  else return new Rook(b, c, player);
 }
+
 ChessBoard::ChessBoard(): tp(new TextDisplay), gp(new GraphDisplay), record(new vector<Move>), turn(0), blackmove(false) {
   for (int n = 0; n < 8; n++) {
    for (int m = 0; m < 8; m++) {
@@ -260,18 +261,20 @@ bool ChessBoard::isExposed(const Posn orig, const Posn dest, bool player) {
  if (player) {
   for (int n = 0; n < 16; n++) {
    if ((black[n]->getPosn()).row != -1) {
-    if (black[n]->canReach(white[0]->getPosn()))
+    if (black[n]->canReach(white[0]->getPosn())) {
      res = true;
      break;
+    }
    }
   }
  }
  else {
   for (int n = 0; n < 16; n++) {
    if ((white[n]->getPosn()).row != -1) {
-    if (white[n]->canReach(black[0]->getPosn()))
+    if (white[n]->canReach(black[0]->getPosn())) {
      res = true;
      break;
+    }
    }
   }
  }

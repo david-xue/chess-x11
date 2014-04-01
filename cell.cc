@@ -20,7 +20,7 @@ void Cell::putPiece(Piece* piece, bool updateScreen) {
 Piece* Cell::takeoff(bool updateScreen) {
  Piece* temp = p;
  p = 0;
-if (gp, updateScreen) gp->undraw(pos);
+if (gp && updateScreen) gp->undraw(pos);
  Posn n (-1, -1);
  if (temp) temp->update(n, false, false);
  return temp;
