@@ -4,9 +4,11 @@
 #include "aitree.h"
 #include "piece.h"
 #include <vector>
+#include <list>
 #include <cstdlib>
 
-#define MAX_TREE_DEPTH 3
+#define MAX_TREE_DEPTH 5
+#define MAX_DEGREE 3
 using namespace std;
 
 // owner is true if white, root node must have !whiteTurn (ie if it's white computer, then whiteTurn for root is false)
@@ -28,17 +30,19 @@ MoveTree::MoveTree(ChessBoard* b, int upperval, bool whiteTurn, Move* mp, bool o
 		} else if (res == 4) {
 			m->name = 'd';
 		}
-		val += evaluateMove(whiteTurn, owner);
+		val += evaluateMove(ownerTurn, m);
 	} else {
 		m = NULL;
 	}
 	if (depth < MAX_TREE_DEPTH) {
-		vector<Move>* moves = getLegalMoves(b,whiteTurn);
-		int temp = moves->size();
-		for (int i = 0; i < temp; ++i) {
-			tree.push_back(new MoveTree(b, val, !whiteTurn, &(moves->at(i)), owner, depth+1));
+		list<Move>* moves = getLegalMoves(b,whiteTurn);
+		if (moves) {
+			int temp = moves->size();
+			for (list<Move>::iterator i = moves->begin(); i != moves->end(); ++i) {
+				tree.push_back(new MoveTree(b, val, !whiteTurn, &(*i), owner, depth+1));
+			}
+			delete moves;
 		}
-		delete moves;
 	}
 	if (mp) {
 		b->undo(false);
@@ -107,24 +111,24 @@ pair <int, vector < Move* > > MoveTree::getBestMove() {
 
 }
 
-int MoveTree::evaluateMove (bool whiteTurn, bool owner) {
+int MoveTree::evaluateMove (bool ownerTurn1, Move *mp) {
 	int res = 0;
 	// check
-	if (m->name == 'c') res += 4;
-	if (m->name == 'C') return 100000;
-	if (m->name == 'd') return 0;
+	//if (mp->name == 'c') res += 4;
+	if (mp->name == 'C') return 10000;
+	//if (mp->name == 'd') return 0;
 
-	if (m->promotion) res += 9;
-	if (m->captured) res += m->captured->val();
-	if (m->enpassant) res += 2; //just for show off lol...
-	if (m->castling) res += 1; //again, just for show off...
+	if (mp->promotion) res += 9;
+	if (mp->captured) res += mp->captured->val();
+	if (mp->enpassant) res += 2; //just for show off lol...
+	if (mp->castling) res += 1; //again, just for show off...
 	// if this a white player evaluating a black move for instance
-	if (!ownerTurn) res = res * -1;
+	if (!ownerTurn1) res = res * -1;
 
 	return res;
 }
 
-vector<Move>* MoveTree::getLegalMoves(ChessBoard* b, bool whiteTurn) {
+list<Move>* MoveTree::getLegalMoves(ChessBoard* b, bool whiteTurn) {
 	Piece ** array = NULL;
 	if (whiteTurn) {
 		array = b->black;
@@ -132,43 +136,85 @@ vector<Move>* MoveTree::getLegalMoves(ChessBoard* b, bool whiteTurn) {
 		array = b->white;
 	}
 	Piece *p = 0;
-	vector<Move> *moves = new vector<Move>;
+	//cerr << "one" << endl;
+	list<Move> *moves = new list<Move>;
+	list<Move>::iterator minIter;
+	int min = 0;
 	for (int i = 0; i < 16; ++i) {
 		p = array[i];
 		if (p != 0 && p->isOnBoard()) {
 			Posn pos(0, 0);
-			int res;
+			int res, moveVal;
 			for (int r = 0; r < 8; r++) {
 				for (int c = 0; c < 8; c++) {
 					pos.row = r;
 					pos.col = c;
 					//if (p->canReach(pos)) {
-						res = p->move(pos);
-						if (res >= 1) {
-							Move m;
-							m.mover = p;
-							m.captured = b->board[r][c]->getPiece();
-							m.orig = p->getPosn();
-							m.dest = pos;
-							m.castling = false;
-							m.promotion = false;
-							m.enpassant = NULL;
-							if (res == 2) {
-								m.castling = true;
-							} else if (res == 3) {
-								m.promotion = true;
-							} else if (res == 4) {
-								m.enpassant =b->board[m.orig.row][m.dest.col]->getPiece();
+
+					res = p->move(pos);
+					if (res >= 1) {
+						Move m;
+						m.mover = p;
+						m.captured = b->board[r][c]->getPiece();
+						m.orig = p->getPosn();
+						m.dest = pos;
+						m.castling = false;
+						m.promotion = false;
+						m.enpassant = NULL;
+						if (res == 2) {
+							m.castling = true;
+						} else if (res == 3) {
+							m.promotion = true;
+						} else if (res == 4) {
+							m.enpassant =
+									b->board[m.orig.row][m.dest.col]->getPiece();
+						}
+						m.name = ' ';
+						moveVal = evaluateMove(true,&m);
+						//cerr << "two" << endl;
+						if (moves->empty()) {
+							//cerr <<"A" << endl;
+							min = moveVal;
+							moves->push_back(m);
+							minIter = moves->begin();
+						} else if (moves->size() <= MAX_DEGREE) {
+							moves->push_back(m);
+							bool unset = true;
+							min = 0;
+							for (list<Move>::iterator listIter =
+									moves->begin();
+									listIter != moves->end(); ++listIter) {
+								int temp = evaluateMove(true, &(*listIter));
+								if ((temp < min) || unset) {
+									min = temp;
+									minIter = listIter;
+									unset = false;
+								}
 							}
-							m.name = ' ';
+						}  else if (moveVal > min) {
+							//cerr << "B" << endl;
+							moves->erase(minIter);
+							bool unset = true;
+							min = 0;
+							for (list<Move>::iterator listIter = moves->begin(); listIter != moves->end(); ++listIter) {
+								int temp = evaluateMove(true, &(*listIter));
+								if ((temp < min) || unset) {
+									min = temp;
+									minIter = listIter;
+									unset = false;
+								}
+							}
 							moves->push_back(m);
 						}
+					}
 					//}
 				}
 			}
 		}
 	}
+	//cerr << "three" << endl;
 	//cout << "size " << moves.size() << endl;
+	if (moves->size() == 0) return NULL;
 	return moves;
 }
 
