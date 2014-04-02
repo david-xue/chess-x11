@@ -13,10 +13,6 @@
 
 using namespace std;
 
-Computer::~Computer() {
-    delete legalMoves;
-}
-
 Computer::Computer (ChessBoard* b, bool isWhite, int lvl) : 
  Player(b, isWhite), AILevel(lvl) {
  b->giveaway(*this);

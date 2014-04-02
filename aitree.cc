@@ -7,8 +7,8 @@
 #include <list>
 #include <cstdlib>
 
-#define MAX_TREE_DEPTH 5
-#define MAX_DEGREE 3
+#define MAX_TREE_DEPTH 6
+#define MAX_DEGREE 1
 using namespace std;
 
 // owner is true if white, root node must have !whiteTurn (ie if it's white computer, then whiteTurn for root is false)
