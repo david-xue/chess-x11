@@ -12,6 +12,7 @@ class GraphDisplay;
 class Computer;
 
 class ChessBoard {
+  friend class MoveTree;
   Cell* board[8][8];
   Piece* white[16];
   Piece* black[16];

@@ -26,6 +26,7 @@ class Piece {
   Posn getPosn();
  //update the status; the second arg is the new threat status and the last is cover status
   virtual void update(const Posn, std::vector<Piece*>, std::vector<Piece*>);
+  bool isOnBoard();
 };
 
 #endif

@@ -200,13 +200,18 @@ GraphDisplay::~GraphDisplay() {
 	//sleep(4);
 
 	/* close the connection to the X server. */
-	XCloseDisplay(display);
 
     map<char,Pixmap*>::iterator iter;
     for (iter = imageMap.begin(); iter != imageMap.end(); ++iter) {
+        XFreePixmap(display,*(iter->second));
         delete iter->second;
     }
-
+    XFreePixmap(display,*xaxis);
+    XFreePixmap(display,*yaxis);
+    delete xaxis;
+    delete yaxis;
+    XFreeGC(display,gc);
+    XCloseDisplay(display);
 }
 
 void GraphDisplay::draw (char piece, Posn pos) { 
