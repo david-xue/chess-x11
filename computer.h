@@ -21,6 +21,7 @@ class Computer: public Player {
     std::vector<Move> capturingmove();
     public:
     Computer(ChessBoard*,bool, int);
+    ~Computer();
     void receive(Piece*[], Piece*[]);
     int move();
     void setAILevel(int); //this is needed because there are 4 levels of AI to choose from (Alternative: a Computer-specific constructor)
