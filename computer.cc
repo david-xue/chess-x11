@@ -71,7 +71,11 @@ int Computer::move() {
    else {
     moves = captures();
     if (moves.size()) m = random(moves);
-    else m = random();
+    else {
+     moves = capturingmove();
+     if (moves.size()) m = random(moves);
+     else m = random();
+    }
    }
   }
   if (AILevel == 3) {
@@ -80,13 +84,20 @@ int Computer::move() {
    else {
     moves = safecaptures();
     if (moves.size()) m = random(moves);
-    else m = random(safemove());
+    else {
+     moves = safecapturingmove();
+     if (moves.size()) m = random(moves);
+     else m = random(safemove());
+    }
    }
   }
   int res = board->move(m.orig, m.dest, true, true);
   if (res == 4) return 0;
   else if (res == 3) return 3;
-  else return 1;
+  else {
+   if (res == 2) cout << (isWhite ? "White checks black." : "Black checks white.") << endl;
+   return 1;
+  }
 }
 
 int min_piece(vector<Piece*>* pieces) {
@@ -132,13 +143,12 @@ vector<Move> Computer::captures() {
 }
 
 vector<Move> Computer::safecaptures() {
- vector<Move> m;
- for (vector<Move>::iterator i = legalMoves.begin(); i != legalMoves.end(); i++) {
-  int x = gain(*board, isWhite);
+ vector<Move> move;
+ vector<Move> m = captures();
+ for (vector<Move>::iterator i = m.begin(); i != m.end(); i++) {
   board->move(i->orig, i->dest, false, true);
-  int y = gain(*board, isWhite);
   bool exposed = false;
-  for (int n = 0; n < 16; n++) {
+  for (int n = 1; n < 16; n++) {
    vector<Piece*> threats = own[n]->getThreats();
    if (threats.size() && own[n]->getCovers().size() == 0) {
     exposed = true;
@@ -149,61 +159,57 @@ vector<Move> Computer::safecaptures() {
     break;
    }
   }
-  if (y > x && !exposed) m.push_back(*i);
+  if (!exposed) move.push_back(*i);
   board->undo(false);
  }
- return m;
+ return move;
 }
 
 vector<Move> Computer::checkingmove() {
  vector<Move> m;
+ vector<Move> checkmate;
   for (vector<Move>::iterator i = legalMoves.begin(); i != legalMoves.end(); i++) {
   int res = board->move(i->orig, i->dest, false, true);
   if (res == 3) {
-   board->undo(false);
-   vector<Move> checkmate;
    checkmate.push_back(*i);
-   return checkmate;
+   break;
   }
   else if (res == 2) {
    m.push_back(*i);
   }
   board->undo(false);
  }
- return m;
+ return checkmate.size() ? checkmate : m;
 }
 
 vector<Move> Computer::safecheckingmove() {
- vector<Move> m;
-  for (vector<Move>::iterator i = legalMoves.begin(); i != legalMoves.end(); i++) {
-  int res = board->move(i->orig, i->dest, false, true);
-  if (res == 3) {
-   board->undo(false);
-   vector<Move> checkmate;
-   checkmate.push_back(*i);
-   return checkmate;
-  }
-  else if (res == 2) {
+ vector<Move> m = checkingmove();
+ vector<Move> move;
+  for (vector<Move>::iterator i = m.begin(); i != m.end(); i++) {
+   int res = board->move(i->orig, i->dest, false, true);
+   if (res == 3) {
+    board->undo(false);
+    return m;
+   }
+   else {
    bool exposed = false;
-   for (int n = 0; n < 16; n++) {
-    Piece* checking;
+   Piece* checking = 0;
+   for (int n = 1; n < 16; n++) {
     if (own[n]->getPosn() == i->dest) checking = own[n];
     else continue;
-    vector<Piece*> threats = checking->getThreats();
-    if (threats.size() && checking->getCovers().size() == 0) {
-     exposed = true;
-     break;
-    }
-    if (threats.size() && min_piece(&threats) < own[n]->val()) {
-     exposed = true;
-     break;
-    }
    }
-   if (!exposed) m.push_back(*i);
+   if (checking) {
+   vector<Piece*> threats = checking->getThreats();
+   if (threats.size() && checking->getCovers().size() == 0)
+     exposed = true;
+   if (threats.size() && min_piece(&threats) < checking->val())
+     exposed = true;
+   if (!exposed) move.push_back(*i);
+   }
+   board->undo(false);
+   }
   }
-  board->undo(false);
- }
- return m;
+ return move;
 }
 
 
@@ -222,32 +228,26 @@ vector<Move> Computer::capturingmove() {
 }
 
 vector<Move> Computer::safecapturingmove() {
-  vector<Move> capturing;
-  vector<Move> fork;
-  for (vector<Move>::iterator i = legalMoves.begin(); i != legalMoves.end(); i++) {
-  int state = threats(*board, !isWhite);
-  board->move(i->orig, i->dest, false, true);
-  bool exposed = false;
-  for (int n = 0; n < 16; n++) {
-   vector<Piece*> threats = own[n]->getThreats();
-   if (threats.size() && own[n]->getCovers().size() == 0) {
-    exposed = true;
-    break;
+  vector<Move> m = capturingmove();
+  vector<Move> move;
+  for (vector<Move>::iterator i = m.begin(); i != m.end(); i++) {
+   board->move(i->orig, i->dest, false, true);
+   bool exposed = false;
+   for (int n = 1; n < 16; n++) {
+    vector<Piece*> threats = own[n]->getThreats();
+    if (threats.size() && own[n]->getCovers().size() == 0) {
+     exposed = true;
+     break;
+    }
+    if (threats.size() && min_piece(&threats) <= own[n]->val()) {
+     exposed = true;
+     break;
+    }
    }
-   if (threats.size() && min_piece(&threats) <= own[n]->val()) {
-    exposed = true;
-    break;
-   }
+   if (!exposed) move.push_back(*i);
+   board->undo(false);
   }
-  if (!exposed) {
-   int res = threats(*board, !isWhite);
-   if (res - state >= 2) fork.push_back(*i);
-   else if (res - state == 1) {
-    capturing.push_back(*i);
-   }
-  }
-  board->undo(false);
- }
- return fork.size() ? fork : capturing;
+ return move;
 }
+
 

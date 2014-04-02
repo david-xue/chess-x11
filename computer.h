@@ -23,7 +23,7 @@ class Computer: public Player {
     std::vector<Move> safecaptures();
     std::vector<Move> safecheckingmove();
     std::vector<Move> safecapturingmove();
-
+    //std::vector<Move> avoid();
     public:
     Computer(ChessBoard*,bool, int);
     void receive(Piece*[], Piece*[]);

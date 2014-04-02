@@ -12,7 +12,7 @@ King::King(ChessBoard * board, char c, bool o) : Piece(board, c, o), moved(false
 
 int King::val() {
     // what is it? 4? or some huge value?
-    return 10000;
+    return 2;
 }
  
 int King::canReach(const Posn posn) {
