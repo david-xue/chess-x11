@@ -10,10 +10,10 @@
 using namespace std;
 
 // owner is true if white, root node must have !whiteTurn (ie if it's white computer, then whiteTurn for root is false)
-MoveTree::MoveTree(ChessBoard* b, int upperval, bool whiteTurn, Move* mp, bool owner, int depth) {
+MoveTree::MoveTree(ChessBoard* b, int upperval, bool whiteTurn, Move* mp, bool owner, int depth) : depth(depth) {
 	tree = {};
 	ownerTurn = (whiteTurn == owner);
-	val = upperval;
+	val = 0;
 	int res = 1;
 
 	if (mp) {
@@ -62,9 +62,8 @@ int MoveTree::getVal() {
 	return val;
 }
 
-/* This algorithm recursively takes the best move for the player
-  and the worst move for opponent to find the optimal move.
-  This is a Minimax algorithm.
+/* This algorithm recursively takes the best move for the player.
+ * The minimax structure of the tree allows for always max checking.
  */
 pair <int, vector < Move* > > MoveTree::getBestMove() {
 
@@ -80,12 +79,6 @@ pair <int, vector < Move* > > MoveTree::getBestMove() {
 	} else {
 		for (vector<MoveTree*>::iterator i = tree.begin(); i != tree.end(); ++i) {
 			tempResult = (*i)->getBestMove();
-			/*
-			if (result.first != 0) {
-				cerr << result.first << endl;
-			} else {
-				cerr << "ZERO" << endl;
-			}*/
 			if (unset) {
 				maxmin = tempResult.first;
 				result = tempResult;
@@ -93,15 +86,15 @@ pair <int, vector < Move* > > MoveTree::getBestMove() {
 			} else {
 				// If the moves we're checking are of the owner (!ownerTurn because the current node is not owner
 				// so the children must be of the owner), then we want the max move
-				if (!ownerTurn) {
-					if (result.first > maxmin) {
-						maxmin = result.first;
+				if ((!ownerTurn) || (depth == 0)) {
+					if (tempResult.first > maxmin) {
+						maxmin = tempResult.first;
 						result = tempResult;
 					}
 				} else {
 					//opposite case, if it's the opponents, then we want the worst case possible
-					if (result.first < maxmin) {
-						maxmin = result.first;
+					if (tempResult.first < maxmin) {
+						maxmin = tempResult.first;
 						result = tempResult;
 					}
 				}

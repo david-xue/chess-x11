@@ -9,7 +9,7 @@ class Move;
 class ChessBoard;
 
 class MoveTree {
-
+	int depth;
     Move* m;
     int val;
     bool ownerTurn;
