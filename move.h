@@ -1,6 +1,6 @@
 #ifndef __MOVE_H__
 #define __MOVE_H__
-
+#include "posn.h"
 class Piece;
 
 struct Move {

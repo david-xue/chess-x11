@@ -46,3 +46,7 @@ int Piece::move(const Posn p) {
 }
 
 Piece::~Piece() {}
+
+bool Piece::isOnBoard() {
+	return (pos.row != -1) && (pos.col != -1);
+}

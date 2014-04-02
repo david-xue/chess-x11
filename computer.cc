@@ -9,6 +9,8 @@
 #include "piece.h"
 #include <time.h>
 #include "cell.h"
+#include "aitree.h"
+
 using namespace std;
 
 Computer::~Computer() {
@@ -78,6 +80,18 @@ int Computer::move() {
     if (moves.size()) m = random(moves);
     else m = random();
    }
+  }
+  if (AILevel == 4) {
+	  MoveTree tree = MoveTree(board, 0, !isWhite, NULL, isWhite, 0);
+	  pair <int,vector <Move*> > bestMove = tree.getBestMove();
+	  vector <Move*> * temp = &(bestMove.second);
+	  int iter = 0;
+
+	  while (iter < temp->size()) {
+		  if (temp->at(iter)) m = *(temp->at(iter));
+		  iter++;
+
+	  }
   }
   int res = board->move(m.orig, m.dest, true, true);
   if (res == 4) return 0;
