@@ -7,8 +7,9 @@
 #include <list>
 #include <cstdlib>
 
-#define MAX_TREE_DEPTH 4
-#define MAX_DEGREE 5
+
+#define MAX_TREE_DEPTH 3
+#define MAX_DEGREE 10
 using namespace std;
 
 // owner is true if white, root node must have !whiteTurn (ie if it's white computer, then whiteTurn for root is false)
@@ -114,14 +115,14 @@ pair <int, vector < Move* > > MoveTree::getBestMove() {
 int MoveTree::evaluateMove (bool ownerTurn1, Move *mp) {
 	int res = 0;
 	// check
-	//if (mp->name == 'c') res += 4;
-	if (mp->name == 'C') return 10000;
-	//if (mp->name == 'd') return 0;
+	if (mp->name == 'c') res += 1;
+	if (mp->name == 'C') return 20;
+	if (mp->name == 'd') return 0;
 
-	if (mp->promotion) res += 9;
+	if (mp->promotion) res += 8;
 	if (mp->captured) res += mp->captured->val();
-	if (mp->enpassant) res += 2; //just for show off lol...
-	if (mp->castling) res += 1; //again, just for show off...
+	if (mp->enpassant) res += 1; //just for show off lol...
+	if (mp->castling) res += 0; //again, just for show off...
 	// if this a white player evaluating a black move for instance
 	if (!ownerTurn1) res = res * -1;
 
