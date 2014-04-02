@@ -7,8 +7,8 @@
 #include <list>
 #include <cstdlib>
 
-#define MAX_TREE_DEPTH 5
-#define MAX_DEGREE 3
+#define MAX_TREE_DEPTH 4
+#define MAX_DEGREE 5
 using namespace std;
 
 // owner is true if white, root node must have !whiteTurn (ie if it's white computer, then whiteTurn for root is false)
@@ -191,7 +191,7 @@ list<Move>* MoveTree::getLegalMoves(ChessBoard* b, bool whiteTurn) {
 									unset = false;
 								}
 							}
-						}  else if (moveVal > min) {
+						}  else if (moveVal >= min) {
 							//cerr << "B" << endl;
 							moves->erase(minIter);
 							bool unset = true;
