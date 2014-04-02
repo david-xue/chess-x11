@@ -11,14 +11,19 @@ class Computer: public Player {
     int AILevel;
     Piece* own[16];
     Piece* opp[16];
-    std::vector<Move>* legalMoves;
+    std::vector<Move> legalMoves;
 
     Move random();
     Move random(std::vector<Move>);
-    std::vector<Move>* alllegalMove();
+    std::vector<Move> alllegalMove();
+    std::vector<Move> safemove();
     std::vector<Move> captures();
     std::vector<Move> checkingmove();
     std::vector<Move> capturingmove();
+    std::vector<Move> safecaptures();
+    std::vector<Move> safecheckingmove();
+    std::vector<Move> safecapturingmove();
+
     public:
     Computer(ChessBoard*,bool, int);
     void receive(Piece*[], Piece*[]);

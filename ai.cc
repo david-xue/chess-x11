@@ -21,8 +21,9 @@ vector<Posn> legalMove(ChessBoard& b, const Posn p) {
 //vector<Posn> howtocap(ChessBoard& b, const Posn me, const Posn target) {
 
 int gain(ChessBoard& b, bool player) {
- int x,y;
- for (int n = 0; n < 16; n++) {
+ int x = 0;
+ int y = 0;
+ for (int n = 1; n < 16; n++) {
   if (b.white[n]->getPosn().row >= 0) x += b.white[n]->val();
   if (b.black[n]->getPosn().row >= 0) y += b.black[n]->val();
  }
@@ -30,7 +31,7 @@ int gain(ChessBoard& b, bool player) {
 }
 
 int threats(ChessBoard& b, bool player) {
- int res;
+ int res = 0;
  if (player) {
   for (int n = 1; n < 16; n++) {
    if (b.white[n]->getThreats().size() && b.white[n]->getCovers().size() == 0) res += 1;

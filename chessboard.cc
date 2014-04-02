@@ -150,7 +150,8 @@ void ChessBoard::update() {
  for (int n = 0; n < 8; n++) {
   for (int m = 0; m < 8; m++) {
    Posn p(n, m);
-   vector<Piece*> w, b;
+   vector<Piece*> w;
+   vector<Piece*> b;
    for (int l = 0; l < 16; l++) {
     Posn p1 = white[l]->getPosn();
     Posn p2 = black[l]->getPosn();
@@ -195,7 +196,7 @@ int ChessBoard::move(const Posn orig, const Posn dest, bool display, bool comput
     if (computer) {
      Pawn* pawn = static_cast<Pawn*>(p);
      pawn->promote(newPiece(this, (blackmove ? 'q' : 'Q'), pawn->getOwner()));
-     gp->draw(pawn->getName(), pawn->getPosn());
+     if (display) gp->draw(pawn->getName(), pawn->getPosn());
     } else {
      char c;
      cout << "Promotion: enter the piece you want." << endl;
@@ -348,7 +349,7 @@ bool ChessBoard::checkmate(bool player) {
 
 bool ChessBoard::stalemate(bool player) {
  bool res = true;
- if (player) {
+ if (!player) {
  for (int n = 0; n < 16; n++) {
   if (res == false) break;
   if (white[n]->getPosn().row >= 0) {
