@@ -3,16 +3,23 @@
 #include "posn.h"
 #include "cell.h"
 #include "piece.h"
+#include "move.h"
 using namespace std;
 
-vector<Posn> legalMove(ChessBoard& b, const Posn p) {
- vector<Posn> vec;
- Piece* m = b.board[p.row][p.col]->getPiece();
- if (m == 0) return vec;
+vector<Move> legalMove(ChessBoard& b, Piece* p) {
+ vector<Move> vec;
+ Posn posn = p->getPosn();
+ if (posn == Posn(-1, -1)) return vec;
  for (int r = 0; r < 8; r++) {
   for (int c = 0; c < 8; c++) {
    Posn pos(r, c);
-   if (m->move(pos)) vec.push_back(pos);
+   if (p->move(pos)) {
+    Move m;
+    m.mover = p;
+    m.orig = posn;
+    m.dest = pos;
+    vec.push_back(m);
+   }
   }
  }
  return vec;
@@ -34,11 +41,13 @@ int threats(ChessBoard& b, bool player) {
  int res = 0;
  if (player) {
   for (int n = 1; n < 16; n++) {
-   if (b.white[n]->getThreats().size() && b.white[n]->getCovers().size() == 0) res += 1;
+   if (b.white[n]->isThreatened() && !b.white[n]->isCovered()) 
+    res += b.white[n]->val();
   }
  } else {
   for (int n = 1; n < 16; n++) {
-   if (b.black[n]->getThreats().size() && b.black[n]->getCovers().size() == 0) res += 1;
+   if (b.black[n]->isThreatened() && !b.black[n]->isCovered()) 
+    res += b.black[n]->val();
   }
  }
  return res;

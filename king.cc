@@ -38,7 +38,7 @@ bool King::isCastling(const Posn posn) {
      if (board->isAttacked(Posn(pos.row, 3), !owner)) return false;
      if (board->isOccupied(Posn(pos.row, 2), !owner)) return false;
     }
-    if (!moved && isThreatened.size() == 0 ) {
+    if (!moved && !Threatened ) {
            vector<Move>* record = board->getRecord();
             if (record->size() == 0) return true;
             else {
@@ -78,6 +78,8 @@ void King::update(const Posn p, vector<Piece*> white, vector<Piece*> black) {
  }    
  moved = res;
  pos = p;
- isThreatened = owner ? black : white;
- isCovered = owner ? white : black;                                                                                                 
+ threats = owner ? black : white;
+ covers = owner ? white : black;
+ Threatened = threats.empty() ? false : true;
+ Covered = covers.empty() ? false : true;
 }

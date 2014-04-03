@@ -15,6 +15,7 @@ class Computer: public Player {
 
     Move random();
     Move random(std::vector<Move>);
+    bool isSafe(Move);
     std::vector<Move> alllegalMove();
     std::vector<Move> safemove();
     std::vector<Move> captures();

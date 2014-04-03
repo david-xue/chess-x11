@@ -10,8 +10,10 @@ class Piece {
   const bool owner;
   ChessBoard* const board;
   Posn pos;
-  std::vector<Piece*> isThreatened;
-  std::vector<Piece*> isCovered;
+  std::vector<Piece*> threats;
+  std::vector<Piece*> covers;
+  bool Threatened;
+  bool Covered;
 
  public:
   Piece(ChessBoard*, char, bool);
@@ -21,7 +23,9 @@ class Piece {
   int move(const Posn);//return 0 if illegal; 1 if legal; 2 if castling; 3 if can be promoted; 4 if en passant
   virtual char getName();
   std::vector<Piece*> getThreats();
+  bool isThreatened();
   std::vector<Piece*> getCovers();
+  bool isCovered();
   bool getOwner();
   Posn getPosn();
  //update the status; the second arg is the new threat status and the last is cover status

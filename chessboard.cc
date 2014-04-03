@@ -336,10 +336,9 @@ bool ChessBoard::checkmate(bool player) {
  bool res = true;
  for (int n = 0; n < 16; n++) {
   Piece* pc = !player ? white[n] : black[n];
-  Posn p = pc->getPosn();
-  if (p.row < 0) continue;
-  vector<Posn> v = legalMove(*this, p);
-  if (v.size()) {
+  Posn p = pc->getPosn();;
+  vector<Move> v = legalMove(*this, pc);
+  if (!v.empty()) {
    res = false;
    break;
   }

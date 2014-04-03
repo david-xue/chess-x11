@@ -4,6 +4,7 @@
 
 struct Move;
 class Posn;
+class Piece;
 class ChessBoard;
 /*
 Move bestMove(bool, const ChessBoard&);
@@ -11,7 +12,7 @@ Move bestMove(bool, const ChessBoard&);
 int assess(bool, const ChessBoard&);
 */
 
-std::vector<Posn> legalMove(ChessBoard&, const Posn);
+std::vector<Move> legalMove(ChessBoard&, Piece*);
 
 int gain(ChessBoard&, bool);
 int threats(ChessBoard&, bool);

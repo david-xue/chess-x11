@@ -36,14 +36,9 @@ void Computer::setAILevel(int lvl) {AILevel = lvl;}
 vector<Move> Computer::alllegalMove() {
  vector<Move> vec;
  for (int n = 0; n < 16; n++) {
-  Posn p = own[n]->getPosn();
-  if (p.row < 0) continue;
-  vector<Posn> v = legalMove(*board, p);
-  for (vector<Posn>::iterator i = v.begin(); i != v.end(); i++) {
-   Move m;
-   m.orig = p;
-   m.dest = *i;
-   vec.push_back(m);
+  vector<Move> v = legalMove(*board, own[n]);
+  for (vector<Move>::iterator i = v.begin(); i != v.end(); i++) {
+   vec.push_back(*i);
   }
  }
  return vec;
@@ -82,14 +77,30 @@ int Computer::move() {
   }
   if (AILevel == 3) {
    vector<Move> moves = safecheckingmove();
-   if (moves.size()) m = random(moves);
+   if (moves.size()) {
+    m = random(moves);
+    cout << "This is a safe checking move." << endl;
+   }
    else {
     moves = safecaptures();
-    if (moves.size()) m = random(moves);
+    if (moves.size()) {
+     m = random(moves);
+     cout << "This is a safe capture." << endl;
+    }
     else {
      moves = safecapturingmove();
-     if (moves.size()) m = random(moves);
-     else m = random(safemove());
+     if (moves.size()) {
+      m = random(moves);
+      cout << "This is a safe capturing move." << endl;
+     }
+     else {
+      moves = safemove();
+      if (!moves.empty()) {
+       m = random(moves);
+       cout << "This is a safe move." << endl;
+      }
+      else m = random();
+     }
     }
    }
   }
@@ -122,24 +133,36 @@ int min_piece(vector<Piece*>* pieces) {
   return n;
 }
 
+int max_piece(vector<Piece*>* pieces) {
+  int n = pieces->at(0)->val();
+  for (vector<Piece*>::iterator i = pieces->begin(); i != pieces->end(); i++) {
+   if ((*i)->val() > n) n = (*i)->val();
+  }
+  return n;
+}
+
+bool Computer::isSafe(Move m) {
+ board->move(m.orig, m.dest, false, true);
+ for (int n = 0; n < 16; n++) {
+  if (own[n]->isThreatened() && !own[n]->isCovered()) {
+   board->undo(false);
+   return false;
+  }
+  vector<Piece*> threats = own[n]->getThreats();
+  if (!threats.empty() && min_piece(&threats) < own[n]->val()) {
+   board->undo(false);
+   return false;
+  }
+ }
+ board->undo(false);
+ return true;
+}
+
+
 vector<Move> Computer::safemove() {
  vector<Move> m;
  for (vector<Move>::iterator i = legalMoves.begin(); i != legalMoves.end(); i++) {
-  board->move(i->orig, i->dest, false, true);
-  bool exposed = false;
-  for (int n = 0; n < 16; n++) {
-   vector<Piece*> threats = own[n]->getThreats();
-   if (threats.size() && own[n]->getCovers().size() == 0) {
-    exposed = true;
-    break;
-   }
-   if (threats.size() && min_piece(&threats) <= own[n]->val()) {
-    exposed = true;
-    break;
-   }
-   if (!exposed) m.push_back(*i);
-  }
-  board->undo(false);
+  if (isSafe(*i) ) m.push_back(*i);
  }
  return m;
 }
@@ -160,21 +183,7 @@ vector<Move> Computer::safecaptures() {
  vector<Move> move;
  vector<Move> m = captures();
  for (vector<Move>::iterator i = m.begin(); i != m.end(); i++) {
-  board->move(i->orig, i->dest, false, true);
-  bool exposed = false;
-  for (int n = 1; n < 16; n++) {
-   vector<Piece*> threats = own[n]->getThreats();
-   if (threats.size() && own[n]->getCovers().size() == 0) {
-    exposed = true;
-    break;
-   }
-   if (threats.size() && min_piece(&threats) <= own[n]->val()) {
-    exposed = true;
-    break;
-   }
-  }
-  if (!exposed) move.push_back(*i);
-  board->undo(false);
+  if (isSafe(*i)) move.push_back(*i);
  }
  return move;
 }
@@ -199,67 +208,40 @@ vector<Move> Computer::checkingmove() {
 vector<Move> Computer::safecheckingmove() {
  vector<Move> m = checkingmove();
  vector<Move> move;
+ if (m.empty()) return m;
+ if (board->move(m.at(0).orig, m.at(0).dest, false, true) == 3) return m;
+ else {
   for (vector<Move>::iterator i = m.begin(); i != m.end(); i++) {
-   int res = board->move(i->orig, i->dest, false, true);
-   if (res == 3) {
-    board->undo(false);
-    return m;
-   }
-   else {
-   bool exposed = false;
-   Piece* checking = 0;
-   for (int n = 1; n < 16; n++) {
-    if (own[n]->getPosn() == i->dest) checking = own[n];
-    else continue;
-   }
-   if (checking) {
-   vector<Piece*> threats = checking->getThreats();
-   if (threats.size() && checking->getCovers().size() == 0)
-     exposed = true;
-   if (threats.size() && min_piece(&threats) < checking->val())
-     exposed = true;
-   if (!exposed) move.push_back(*i);
-   }
-   board->undo(false);
-   }
+   if (isSafe(*i)) move.push_back(*i); 
   }
+ }
  return move;
 }
 
 
 vector<Move> Computer::capturingmove() {
   vector<Move> capturing;
-  vector<Move> fork;
   for (vector<Move>::iterator i = legalMoves.begin(); i != legalMoves.end(); i++) {
   int state = threats(*board, !isWhite);
   board->move(i->orig, i->dest, false, true);
   int res = threats(*board, !isWhite);
-  if (res - state >= 2) fork.push_back(*i);
-  if (res - state == 1) capturing.push_back(*i);
+  if (res > state) capturing.push_back(*i);
+  for (int n = 0; n < 16; n++) {
+   Piece* p = i->mover;
+   if (opp[n]->getPosn().row < 0) continue;
+   if (p->move(opp[n]->getPosn()) && p->val() < opp[n]->val()) 
+     capturing.push_back(*i);
+  }
   board->undo(false);
  }
- return fork.size() ? fork : capturing;
+ return capturing;
 }
 
 vector<Move> Computer::safecapturingmove() {
   vector<Move> m = capturingmove();
   vector<Move> move;
   for (vector<Move>::iterator i = m.begin(); i != m.end(); i++) {
-   board->move(i->orig, i->dest, false, true);
-   bool exposed = false;
-   for (int n = 1; n < 16; n++) {
-    vector<Piece*> threats = own[n]->getThreats();
-    if (threats.size() && own[n]->getCovers().size() == 0) {
-     exposed = true;
-     break;
-    }
-    if (threats.size() && min_piece(&threats) <= own[n]->val()) {
-     exposed = true;
-     break;
-    }
-   }
-   if (!exposed) move.push_back(*i);
-   board->undo(false);
+   if (isSafe(*i)) move.push_back(*i);
   }
  return move;
 }

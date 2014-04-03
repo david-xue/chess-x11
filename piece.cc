@@ -20,17 +20,23 @@ Posn Piece::getPosn() {
 }
 
 vector<Piece*> Piece::getThreats() {
- return isThreatened;
+ return threats;
 }
 
+bool Piece::isThreatened() {return Threatened;}
+
+bool Piece::isCovered() {return Covered;}
+
 vector<Piece*> Piece::getCovers() {
- return isCovered;
+ return covers;
 }
 
 void Piece::update(const Posn p, vector<Piece*> white, vector<Piece*> black) {
  pos = p;
- isThreatened = owner ? black : white;
- isCovered = owner ? white : black;
+ threats = owner ? black : white;
+ covers = owner ? white : black;
+ Threatened = threats.empty() ? false : true;
+ Covered = covers.empty() ? false : true;
 }
 
 int Piece::move(const Posn p) {

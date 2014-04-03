@@ -22,7 +22,7 @@ char Pawn::getName() {
 
 void Pawn::promote(Piece* p) {
  prom = p;
- owner ? p->update(pos, isCovered, isThreatened) : p->update(pos, isThreatened, isCovered);
+ owner ? p->update(pos, covers, threats) : p->update(pos, covers, threats);
 } 
  
 int Pawn::canReach(const Posn posn) {
@@ -99,6 +99,8 @@ void Pawn::update(const Posn p, vector<Piece*> white, vector<Piece*> black) {
  }
  moved = res; 
  pos = p;
- isThreatened = owner ? black : white;
- isCovered = owner ? white : black;
+ threats = owner ? black : white;
+ covers = owner ? white : black;
+ Threatened = threats.empty() ? false : true;
+ Covered = covers.empty() ? false : true;
 }

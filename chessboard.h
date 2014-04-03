@@ -62,7 +62,7 @@ class ChessBoard {
  //showThreatened displays the threatened pieces
   friend void showThreatened(const Posn, bool);
  //legalMove returns all legal moves of a piece; caller's duty to delete the memory
-  friend std::vector<Posn> legalMove(ChessBoard&, const Posn);
+  friend std::vector<Move> legalMove(ChessBoard&, Piece*);
  //showlegalMove displays all legal moves of a piece
   friend void showlegalMove(const Posn);
  //safeMove returns all legal moves to cells that is not threatened
