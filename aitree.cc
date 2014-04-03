@@ -5,16 +5,18 @@
 #include "piece.h"
 #include <vector>
 #include <list>
+#include <time.h>
 #include <cstdlib>
 
 
 using namespace std;
 
-unsigned int MAX_TREE_DEPTH = 4;
-unsigned int MAX_DEGREE = 6;
+#define MAX_TREE_DEPTH 4
+unsigned int MAX_DEGREE = 1;
 // owner is true if white, root node must have !whiteTurn (ie if it's white computer, then whiteTurn for root is false)
 MoveTree::MoveTree(ChessBoard* b, int upperval, bool whiteTurn, Move* mp, bool owner, int depth) : depth(depth) {
 	if (depth == 0) {
+		//srand (time(NULL));
 		int temp = 0;
 		Piece ** array;
 		if (!owner) {
@@ -27,14 +29,15 @@ MoveTree::MoveTree(ChessBoard* b, int upperval, bool whiteTurn, Move* mp, bool o
 				temp++;
 			}
 		}
-		if (temp < 5) {
-			if (temp < 3) {
-				MAX_DEGREE = 16;
+		if (temp < 9) {
+			if (temp < 6) {
+				MAX_DEGREE = 3;
 			} else {
-				MAX_DEGREE = 10;
+				MAX_DEGREE = 2;
 			}
 		}
 	}
+	
 	tree = {};
 	ownerTurn = (whiteTurn == owner);
 	val = 0;
@@ -45,10 +48,12 @@ MoveTree::MoveTree(ChessBoard* b, int upperval, bool whiteTurn, Move* mp, bool o
 		m = tempM;
 		res = b->move(mp->orig, mp->dest, false, true);
 		*m = *mp;
+		m->name = ' ';
 		if (res == 2) {
 			m->name = 'c';
 		} else if (res == 3) {
 			m->name = 'C';
+			depth = MAX_TREE_DEPTH;
 		} else if (res == 4) {
 			m->name = 'd';
 		}
@@ -56,16 +61,26 @@ MoveTree::MoveTree(ChessBoard* b, int upperval, bool whiteTurn, Move* mp, bool o
 	} else {
 		m = NULL;
 	}
+
+
 	if (depth < MAX_TREE_DEPTH) {
 		list<Move>* moves = getLegalMoves(b,whiteTurn);
 		if (moves) {
+			
 			int temp = moves->size();
 			for (list<Move>::iterator i = moves->begin(); i != moves->end(); ++i) {
+				if (m) {
+					if (m->name == 'C') {
+					break;
+					}
+				}
 				tree.push_back(new MoveTree(b, val, !whiteTurn, &(*i), owner, depth+1));
 			}
 			delete moves;
 		}
 	}
+	//}
+
 	if (mp) {
 		b->undo(false);
 	}
@@ -92,13 +107,18 @@ int MoveTree::getVal() {
  * The minimax structure of the tree allows for always max checking.
  */
 pair <int, vector < Move* > > MoveTree::getBestMove() {
-
+	srand (time(NULL));
 	bool unset = true;
 	int maxmin = 0;
 	pair <int, vector <Move*> > result, tempResult;
 	int tempSize = tree.size();
 	if (tempSize == 0) {
 		vector<Move*> v;
+		/*if (m) {
+			if (m->name == 'C') {
+				v.push_back(m);
+			}
+		}*/
 		result.first = val;
 		result.second = v;
 		return result;
@@ -116,12 +136,24 @@ pair <int, vector < Move* > > MoveTree::getBestMove() {
 					if (tempResult.first > maxmin) {
 						maxmin = tempResult.first;
 						result = tempResult;
+					} else if (tempResult.first == maxmin) {
+						int random = rand() % 2;
+						if (random == 0) {	
+							maxmin = tempResult.first;
+							result = tempResult;
+						}
 					}
 				} else {
 					//opposite case, if it's the opponents, then we want the worst case possible
 					if (tempResult.first < maxmin) {
 						maxmin = tempResult.first;
 						result = tempResult;
+					} else if (tempResult.first == maxmin) {
+						int random = rand() % 2;
+						if (random == 0) {	
+							maxmin = tempResult.first;
+							result = tempResult;
+						}
 					}
 				}
 			}
@@ -139,11 +171,12 @@ int MoveTree::evaluateMove (bool ownerTurn1, Move *mp) {
 	//if (mp->name == 'c') res += 1;
 	if (mp->name == 'C') return 1000;
 	//if (mp->name == 'd') return 0;
-
-	if (mp->promotion) res += 7;
+	if (mp->promotion) {
+		if (!ownerTurn1) res += 1;
+	}
 	if (mp->captured) res += mp->captured->val();
-	if (mp->enpassant) res += 2; //just for show off lol...
-	if (mp->castling) res += 1; //again, just for show off...
+	if (mp->enpassant) res += 1; //just for show off lol...
+	if (mp->castling) res += 0; //again, just for show off...
 	// if this a white player evaluating a black move for instance
 	if (!ownerTurn1) res = res * -1;
 
@@ -151,6 +184,16 @@ int MoveTree::evaluateMove (bool ownerTurn1, Move *mp) {
 }
 
 list<Move>* MoveTree::getLegalMoves(ChessBoard* b, bool whiteTurn) {
+	int nodedeg;
+	if (depth == 0) {
+		nodedeg = 12 * MAX_DEGREE;
+	} else if (depth == 1) {
+		nodedeg = 12;
+	} else if (depth == 2) {
+		nodedeg = 2;
+	} else {
+		nodedeg = 1;
+	}
 	Piece ** array = NULL;
 	if (whiteTurn) {
 		array = b->black;
@@ -162,8 +205,13 @@ list<Move>* MoveTree::getLegalMoves(ChessBoard* b, bool whiteTurn) {
 	list<Move> *moves = new list<Move>;
 	list<Move>::iterator minIter;
 	int min = 0;
+	//int random = rand() % 2;
 	for (int i = 0; i < 16; ++i) {
-		p = array[i];
+		//if (random == 0) {
+			p = array[i];
+		//} else {
+		//	p = array[15-i];
+		//}
 		if (p != 0 && p->isOnBoard()) {
 			Posn pos(0, 0);
 			int res, moveVal;
@@ -199,7 +247,7 @@ list<Move>* MoveTree::getLegalMoves(ChessBoard* b, bool whiteTurn) {
 							min = moveVal;
 							moves->push_back(m);
 							minIter = moves->begin();
-						} else if (moves->size() <= MAX_DEGREE) {
+						} else if (moves->size() <= nodedeg) {
 							moves->push_back(m);
 							bool unset = true;
 							min = 0;
