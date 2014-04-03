@@ -45,7 +45,7 @@ MoveTree::MoveTree(ChessBoard* b, int upperval, bool whiteTurn, Move* mp, bool o
 			delete moves;
 		}
 	}
-	if (mp) {
+	if (m) {
 		b->undo(false);
 	}
 }
@@ -116,7 +116,7 @@ int MoveTree::evaluateMove (bool ownerTurn1, Move *mp) {
 	int res = 0;
 	// check
 	if (mp->name == 'c') res += 1;
-	if (mp->name == 'C') return 20;
+	if (mp->name == 'C') return 50;
 	if (mp->name == 'd') return 0;
 
 	if (mp->promotion) res += 8;
@@ -130,6 +130,9 @@ int MoveTree::evaluateMove (bool ownerTurn1, Move *mp) {
 }
 
 list<Move>* MoveTree::getLegalMoves(ChessBoard* b, bool whiteTurn) {
+    if (m) {
+        if (m->name == 'C') return NULL;
+    }
 	Piece ** array = NULL;
 	if (whiteTurn) {
 		array = b->black;
@@ -150,8 +153,8 @@ list<Move>* MoveTree::getLegalMoves(ChessBoard* b, bool whiteTurn) {
 				for (int c = 0; c < 8; c++) {
 					pos.row = r;
 					pos.col = c;
-					//if (p->canReach(pos)) {
-
+	//				if (p->canReach(pos)) {
+                    
 					res = p->move(pos);
 					if (res >= 1) {
 						Move m;
@@ -207,8 +210,8 @@ list<Move>* MoveTree::getLegalMoves(ChessBoard* b, bool whiteTurn) {
 							}
 							moves->push_back(m);
 						}
+	//				}
 					}
-					//}
 				}
 			}
 		}
