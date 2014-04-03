@@ -75,9 +75,7 @@ GC create_gc(Display* display, Window win, int reverse_video) {
 GraphDisplay::GraphDisplay() {
 
 	int screen_num; /* number of screen to place the window on.  */
-
-	unsigned int display_width, display_height; /* height and width of the X display.        */
-
+    unsigned int display_width, display_height;
 	char *display_name = getenv("DISPLAY"); /* address of the X display.      */
 
 	/* open connection with the X server. */
@@ -98,8 +96,8 @@ GraphDisplay::GraphDisplay() {
 	//cout << "window width - " << width << "; height - " << height << endl;
 
     // make the new window 500x500
-    width = 670;
-    height = 670;
+    width = 710;
+    height = 710;
 
 	/* create a simple window, as a direct child of the screen's   */
 	/* root window. Use the screen's white color as the background */
@@ -112,20 +110,22 @@ GraphDisplay::GraphDisplay() {
 	XSync(display, False);
 
 
-    char tempArray [15] = {'K','Q','R','B','N','P','k','q','r','b','n','p', ' ', 'x', 'y'};
+    char tempArray [16] = {'K','Q','R','B','N','P','k','q','r','b','n','p', ' ', 'x', 'y','g'};
 	string extension = ".xbm";
     string fileName;
 
     bitmap_width = bitmap_height = 80;
     axis_width = 640;
     axis_height = 30;
-	for (int i = 0; i < 15; ++i) {
+	for (int i = 0; i < 16; ++i) {
         if (tempArray[i] == ' ') {
             fileName = "blank.xbm";
         } else if (tempArray[i] == 'x') {
             fileName = "xaxis.xbm";
         } else if (tempArray[i] == 'y') {
             fileName = "yaxis.xbm";
+        } else if (tempArray[i] == 'g') {
+            fileName = "background.xbm";
         } else if (tempArray[i] != toupper(tempArray[i])) {
 			fileName = tempArray[i];
             fileName += "black" + extension;
@@ -149,7 +149,7 @@ GraphDisplay::GraphDisplay() {
 		/* variable.                                                         */
         int rc;
 
-        if ((fileName != "xaxis.xbm") && (fileName != "yaxis.xbm")) {
+        if ((fileName != "xaxis.xbm") && (fileName != "yaxis.xbm") && (fileName != "background.xbm")) {
 		    rc = XReadBitmapFile(display, win, fileName.c_str(),
 				&bitmap_width, &bitmap_height, bitmap, &hotspot_x, &hotspot_y);
             imageMap[tempArray[i]] = bitmap;
@@ -161,6 +161,10 @@ GraphDisplay::GraphDisplay() {
             yaxis = bitmap;
             rc = XReadBitmapFile(display, win, fileName.c_str(),
                     &axis_height, &axis_width, bitmap, &hotspot_x, &hotspot_y);
+        } else if (fileName == "background.xbm") {
+            bg = bitmap;
+            rc = XReadBitmapFile(display, win, fileName.c_str(),
+                    &width, &height, bitmap, &hotspot_x, &hotspot_y);
         }
 
 		switch (rc) {
@@ -181,6 +185,10 @@ GraphDisplay::GraphDisplay() {
         XSync(display,false);
         //usleep(1);        
 	}
+     XCopyPlane(display, *bg, win, gc, 0, 0, width,
+                height, 0, 0, 1);
+    XSync(display, False);
+
 
     XCopyPlane(display, *xaxis, win, gc, 0, 0, axis_width,
 				axis_height, 30, 0, 1);
@@ -188,8 +196,11 @@ GraphDisplay::GraphDisplay() {
     XCopyPlane(display, *yaxis, win, gc, 0, 0, axis_height,
                 axis_width, 0, 30, 1);
     XSync(display, False);
-
-
+    for (int i = 0; i < 8; ++i) {
+        for (int j = 0; j < 8; ++j) {
+            undraw(Posn(i,j));
+        }
+    }
 }
 
 GraphDisplay::~GraphDisplay() {
@@ -208,15 +219,17 @@ GraphDisplay::~GraphDisplay() {
     }
     XFreePixmap(display,*xaxis);
     XFreePixmap(display,*yaxis);
+    XFreePixmap(display,*bg);
     delete xaxis;
     delete yaxis;
+    delete bg;
     XFreeGC(display,gc);
     XCloseDisplay(display);
 }
 
 void GraphDisplay::draw (char piece, Posn pos) { 
-	int y = pos.row * bitmap_height + 40;
-	int x = pos.col * bitmap_width + 40;
+	int y = pos.row * (bitmap_height+5) + 40;
+	int x = pos.col * (bitmap_width+5) + 40;
 	try {
 		XCopyPlane(display, *(imageMap.at(piece)), win, gc, 0, 0, bitmap_width,
 				bitmap_height, x, y, 1);
@@ -228,8 +241,8 @@ void GraphDisplay::draw (char piece, Posn pos) {
 }
 
 void GraphDisplay::undraw(Posn pos) {
-    int y = pos.row * bitmap_height + 40;
-	int x = pos.col * bitmap_width + 40;
+    int y = pos.row * (bitmap_height+5) + 40;
+	int x = pos.col * (bitmap_width+5) + 40;
 	char blank = ' ';
     try {
 	    XCopyPlane(display, *(imageMap.at(blank)), win, gc, 0, 0, bitmap_width,
