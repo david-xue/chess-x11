@@ -114,14 +114,14 @@ int Computer::move() {
 		  if (temp->at(iter)) m = *(temp->at(iter));
 		  iter++;
 	  }
-      iter--;
+    /*  iter--;
     if (temp->at(iter)){
       while ( (temp->at(iter)->orig.row == -1 ) || ( temp->at(iter)->dest.row == -1)) {
         iter--;
           if (temp->at(iter)) m = *(temp->at(iter));
-           }}
+           }}*/
   }
-  if (m.orig == Posn(-1,-1))  m = random();
+  //if (m.orig == Posn(-1,-1))  m = random();
   int res = board->move(m.orig, m.dest, true, true);
 
   if (res == 4) return 0;

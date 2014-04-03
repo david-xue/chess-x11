@@ -217,6 +217,7 @@ int ChessBoard::move(const Posn orig, const Posn dest, bool display, bool comput
    if (display) {
      tp->notify(m);
      cout << *tp;
+	 int asdofijsdo = 0;
    }
    if (check(blackmove)) {
     if (checkmate(blackmove)) {

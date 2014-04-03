@@ -8,12 +8,33 @@
 #include <cstdlib>
 
 
-#define MAX_TREE_DEPTH 3
-#define MAX_DEGREE 10
 using namespace std;
 
+unsigned int MAX_TREE_DEPTH = 4;
+unsigned int MAX_DEGREE = 6;
 // owner is true if white, root node must have !whiteTurn (ie if it's white computer, then whiteTurn for root is false)
 MoveTree::MoveTree(ChessBoard* b, int upperval, bool whiteTurn, Move* mp, bool owner, int depth) : depth(depth) {
+	if (depth == 0) {
+		int temp = 0;
+		Piece ** array;
+		if (!owner) {
+			array = b->black;
+		} else {
+			array = b->white;
+		}
+		for (int i = 0; i < 16; i++) {
+			if (array[i]->isOnBoard()) {
+				temp++;
+			}
+		}
+		if (temp < 5) {
+			if (temp < 3) {
+				MAX_DEGREE = 16;
+			} else {
+				MAX_DEGREE = 10;
+			}
+		}
+	}
 	tree = {};
 	ownerTurn = (whiteTurn == owner);
 	val = 0;
@@ -45,7 +66,7 @@ MoveTree::MoveTree(ChessBoard* b, int upperval, bool whiteTurn, Move* mp, bool o
 			delete moves;
 		}
 	}
-	if (m) {
+	if (mp) {
 		b->undo(false);
 	}
 }
@@ -115,14 +136,14 @@ pair <int, vector < Move* > > MoveTree::getBestMove() {
 int MoveTree::evaluateMove (bool ownerTurn1, Move *mp) {
 	int res = 0;
 	// check
-	if (mp->name == 'c') res += 1;
-	if (mp->name == 'C') return 50;
-	if (mp->name == 'd') return 0;
+	//if (mp->name == 'c') res += 1;
+	if (mp->name == 'C') return 1000;
+	//if (mp->name == 'd') return 0;
 
-	if (mp->promotion) res += 8;
+	if (mp->promotion) res += 7;
 	if (mp->captured) res += mp->captured->val();
-	if (mp->enpassant) res += 1; //just for show off lol...
-	if (mp->castling) res += 0; //again, just for show off...
+	if (mp->enpassant) res += 2; //just for show off lol...
+	if (mp->castling) res += 1; //again, just for show off...
 	// if this a white player evaluating a black move for instance
 	if (!ownerTurn1) res = res * -1;
 
@@ -130,9 +151,6 @@ int MoveTree::evaluateMove (bool ownerTurn1, Move *mp) {
 }
 
 list<Move>* MoveTree::getLegalMoves(ChessBoard* b, bool whiteTurn) {
-    if (m) {
-        if (m->name == 'C') return NULL;
-    }
 	Piece ** array = NULL;
 	if (whiteTurn) {
 		array = b->black;
@@ -153,8 +171,8 @@ list<Move>* MoveTree::getLegalMoves(ChessBoard* b, bool whiteTurn) {
 				for (int c = 0; c < 8; c++) {
 					pos.row = r;
 					pos.col = c;
-	//				if (p->canReach(pos)) {
-                    
+					//if (p->canReach(pos)) {
+
 					res = p->move(pos);
 					if (res >= 1) {
 						Move m;
@@ -210,8 +228,8 @@ list<Move>* MoveTree::getLegalMoves(ChessBoard* b, bool whiteTurn) {
 							}
 							moves->push_back(m);
 						}
-	//				}
 					}
+					//}
 				}
 			}
 		}
@@ -221,8 +239,3 @@ list<Move>* MoveTree::getLegalMoves(ChessBoard* b, bool whiteTurn) {
 	if (moves->size() == 0) return NULL;
 	return moves;
 }
-
-
-
-
-
