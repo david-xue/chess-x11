@@ -88,8 +88,7 @@ GC create_gc(Display* display, Window win, int reverse_video) {
 GraphDisplay::GraphDisplay() {
 
 	int screen_num; /* number of screen to place the window on.  */
-    unsigned int display_width, display_height;
-	char *display_name = getenv("DISPLAY"); /* address of the X display.      */
+    char *display_name = getenv("DISPLAY"); /* address of the X display.      */
 
 	/* open connection with the X server. */
 	display = XOpenDisplay(display_name);
@@ -100,10 +99,8 @@ GraphDisplay::GraphDisplay() {
 
 	/* get the geometry of the default screen for our display. */
 	screen_num = DefaultScreen(display);
-	display_width = DisplayWidth(display, screen_num);
-	display_height = DisplayHeight(display, screen_num);
-
-    // make the new window 500x500
+	
+    // make the new window 710x710
     width = 710;
     height = 710;
 
@@ -199,10 +196,10 @@ GraphDisplay::GraphDisplay() {
 
     // draws the axes
     XCopyPlane(display, *xaxis, win, gc, 0, 0, axis_width,
-				axis_height, 30, 0, 1);
+				axis_height, 60, 0, 1);
 	XSync(display, False);
     XCopyPlane(display, *yaxis, win, gc, 0, 0, axis_height,
-                axis_width, 0, 30, 1);
+                axis_width, 0, 60, 1);
     XSync(display, False);
     // draws a blank chess board
     for (int i = 0; i < 8; ++i) {
