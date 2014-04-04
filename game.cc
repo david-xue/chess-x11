@@ -4,13 +4,13 @@
 #include "human.h"
 #include "computer.h"
 #include "posn.h"
-//#include "display.h"
+
 #include <sstream>
 #include <string>
 #include <iostream>
 
 using namespace std;
-
+//
 Game::Game() : board(new ChessBoard()), white(NULL), black(NULL), whitescore(0), blackscore(0), selfSetup(false) {}
 
 Game::~Game() {
