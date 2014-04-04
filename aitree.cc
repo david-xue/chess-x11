@@ -42,7 +42,7 @@ MoveTree::MoveTree(ChessBoard* b, int upperval, bool whiteTurn, Move* mp, bool o
 		}
 	}
 	
-	tree = {};
+	tree.clear();
     // check if this is the owner's turn (for root node, this doesn't mean anything)
 	ownerTurn = (whiteTurn == owner);
 	val = 0;
@@ -74,8 +74,6 @@ MoveTree::MoveTree(ChessBoard* b, int upperval, bool whiteTurn, Move* mp, bool o
 	if (depth < MAX_TREE_DEPTH) {
 		list<Move>* moves = getLegalMoves(b,whiteTurn);
 		if (moves) {
-			
-			int temp = moves->size();
 			for (list<Move>::iterator i = moves->begin(); i != moves->end(); ++i) {
 				if (m) {
 					if (m->name == 'C') {

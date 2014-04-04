@@ -4,7 +4,9 @@
 #include "chessboard.h"
 #include "player.h"
 #include "posn.h"
-//#include "display.h"
+
+// This class handles players and their moves and keep track of score and other statistics for the program.
+// See game.cc for comments on each method
 
 class Game {
   ChessBoard* board;

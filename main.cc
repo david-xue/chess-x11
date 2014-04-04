@@ -1,3 +1,8 @@
+// This program satisfies all requirements of the Chess project.
+
+// This is the main program intializing a Game object.
+// It handles all inputs between games.
+
 #include "game.h"
 #include <iostream>
 #include <sstream>
@@ -5,6 +10,7 @@
 
 using namespace std;
 
+// read the player type and return an appropriate integer
 int readPlayerType (const string &str) {
     if (str == "human") {
         return 0;
@@ -17,6 +23,7 @@ int readPlayerType (const string &str) {
     return -1;
 }
 
+// Main program, initialize Game
 int main () {
     Game g;
     string s;
