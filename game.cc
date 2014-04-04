@@ -79,9 +79,9 @@ void Game::newGame(const int whitePlayer, const int blackPlayer) {
         } else if (result == 3) {
             // win by checkmate
             if (whiteTurn) {
-                endGame(1);
+                endGame(1, true);
             } else {
-                endGame(2);
+                endGame(2, true);
             }
             break;
         }
@@ -105,12 +105,14 @@ void Game::saveRecord() {
 }
 
 //win is 1 if white wins, 2 if black wins, 0 if draw
-void Game::endGame (int win) {
+void Game::endGame (int win, bool checkmate) {
     if (win == 1) {
-        cout << "White wins" << endl;
+        if (checkmate) cout << "Checkmate! ";
+        cout << "White wins!" << endl;
         ++whitescore;
     } else if (win == 2) {
-        cout << "Black wins" << endl;
+        if (checkmate) cout << "Checkmate! ";
+        cout << "Black wins!" << endl;
         ++blackscore;
     } else {
         cout << "Draw" << endl;

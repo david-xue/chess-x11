@@ -2,9 +2,11 @@
 #include "human.h"
 #include "chessboard.h"
 #include "posn.h"
+#include "move.h"
 #include <sstream>
 #include <iostream>
 #include <string>
+#include <vector>
 
 using namespace std;
 
@@ -79,8 +81,14 @@ int Human::readLine(string s) {
             //this player lost
             return 2;
         } else if (cmd == "undo") {
+           if (board->getRecord()->size() < 2) {
+            cout << "Bad input on command" << endl;
+            return 0;
+           } else {
+            board->undo();
             board->undo();
             return 5;
+           }
         } else {
             cout << "Bad input on command" << endl;
             return 0;

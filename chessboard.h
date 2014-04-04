@@ -53,6 +53,7 @@ class ChessBoard {
   bool isAttacked(const Posn, bool);
   // returns true if white goes next, false if black goes next
   bool isWhiteMove();
+  // pass its pieces to computer player
   void giveaway(Computer&);
 
  //friend functions for display and AI:
