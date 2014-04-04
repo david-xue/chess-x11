@@ -11,13 +11,17 @@
 
 using namespace std;
 
-#define MAX_TREE_DEPTH 4
-unsigned int MAX_DEGREE = 1;
+#define MAX_TREE_DEPTH 4 // depth of tree
+unsigned int MAX_DEGREE = 1; //multiplier
+
+// This recursive ctor will create a game tree of depth MAX_TREE_DEPTH
+// mp is the current node's move (NULL for root)
+// upperval is not and shouldn't be used
 // owner is true if white, root node must have !whiteTurn (ie if it's white computer, then whiteTurn for root is false)
 MoveTree::MoveTree(ChessBoard* b, int upperval, bool whiteTurn, Move* mp, bool owner, int depth) : depth(depth) {
-	if (depth == 0) {
-		//srand (time(NULL));
-		int temp = 0;
+	// set on degree of tree node multiplier based on how many pieces the AI has left
+    if (depth == 0) {
+	    int temp = 0;
 		Piece ** array;
 		if (!owner) {
 			array = b->black;
@@ -29,8 +33,8 @@ MoveTree::MoveTree(ChessBoard* b, int upperval, bool whiteTurn, Move* mp, bool o
 				temp++;
 			}
 		}
-		if (temp < 9) {
-			if (temp < 6) {
+		if (temp < 7) {
+			if (temp < 4) {
 				MAX_DEGREE = 3;
 			} else {
 				MAX_DEGREE = 2;
@@ -39,19 +43,22 @@ MoveTree::MoveTree(ChessBoard* b, int upperval, bool whiteTurn, Move* mp, bool o
 	}
 	
 	tree = {};
+    // check if this is the owner's turn (for root node, this doesn't mean anything)
 	ownerTurn = (whiteTurn == owner);
 	val = 0;
 	int res = 1;
-
+    // First evaluate the current move and store it in node
 	if (mp) {
 		Move *tempM = new Move;
 		m = tempM;
+        // make the move on the board (change the current state of board and pass it to its children)
 		res = b->move(mp->orig, mp->dest, false, true);
 		*m = *mp;
 		m->name = ' ';
 		if (res == 2) {
 			m->name = 'c';
 		} else if (res == 3) {
+            // stop searching if checkmate
 			m->name = 'C';
 			depth = MAX_TREE_DEPTH;
 		} else if (res == 4) {
@@ -62,7 +69,8 @@ MoveTree::MoveTree(ChessBoard* b, int upperval, bool whiteTurn, Move* mp, bool o
 		m = NULL;
 	}
 
-
+    // recursively create children nodes based moves return in getLegalMoves
+    // which will heuristically determine an incomplete list of moves that the current player could make 
 	if (depth < MAX_TREE_DEPTH) {
 		list<Move>* moves = getLegalMoves(b,whiteTurn);
 		if (moves) {
@@ -79,22 +87,23 @@ MoveTree::MoveTree(ChessBoard* b, int upperval, bool whiteTurn, Move* mp, bool o
 			delete moves;
 		}
 	}
-	//}
-
+	
+    // undo the change when done
 	if (mp) {
 		b->undo(false);
 	}
 }
 
+// dtor
 MoveTree::~MoveTree() {
 	unsigned int temp = tree.size();
-	//cout << "size of tree " << temp << endl;
 	for (unsigned int i = 0; i < temp; ++i) {
 		delete (tree[i]);
 	}
 	delete m;
 }
 
+// getters
 Move* MoveTree::getMove() {
 	return m;
 }
@@ -103,9 +112,10 @@ int MoveTree::getVal() {
 	return val;
 }
 
-/* This algorithm recursively takes the best move for the player.
- * The minimax structure of the tree allows for always max checking.
+/* This algorithm recursively takes the best move for the current node.
+ * This is a minimax algorithm in that it takes the best move of owner and opponent each time
  */
+// This returns a pair of int (representing the value of the move), and a vector of move (this vector should be size 1 or 2 at all times)
 pair <int, vector < Move* > > MoveTree::getBestMove() {
 	srand (time(NULL));
 	bool unset = true;
@@ -114,15 +124,11 @@ pair <int, vector < Move* > > MoveTree::getBestMove() {
 	int tempSize = tree.size();
 	if (tempSize == 0) {
 		vector<Move*> v;
-		/*if (m) {
-			if (m->name == 'C') {
-				v.push_back(m);
-			}
-		}*/
 		result.first = val;
 		result.second = v;
 		return result;
 	} else {
+        // search through its children for the move with the best net gain
 		for (vector<MoveTree*>::iterator i = tree.begin(); i != tree.end(); ++i) {
 			tempResult = (*i)->getBestMove();
 			if (unset) {
@@ -165,26 +171,31 @@ pair <int, vector < Move* > > MoveTree::getBestMove() {
 
 }
 
+//Evaluate the move based on what happened
 int MoveTree::evaluateMove (bool ownerTurn1, Move *mp) {
 	int res = 0;
-	// check
+	// check (no value given because it screws the AI's thinking e.g. sacrificing a pawn for a check
 	//if (mp->name == 'c') res += 1;
+    // Checkmate is crucial
 	if (mp->name == 'C') return 1000;
 	//if (mp->name == 'd') return 0;
 	if (mp->promotion) {
 		if (!ownerTurn1) res += 1;
 	}
 	if (mp->captured) res += mp->captured->val();
-	if (mp->enpassant) res += 1; //just for show off lol...
-	if (mp->castling) res += 0; //again, just for show off...
+	if (mp->enpassant) res += 1; //just for show off
+	if (mp->castling) res += 0;
 	// if this a white player evaluating a black move for instance
 	if (!ownerTurn1) res = res * -1;
 
 	return res;
 }
 
+// Get a fix-sized list of moves (otherwise too high degree for node and too slow), which are at the current time, the best moves possible
+// It basically checks every single move on the board and evaluate (note that there's always a legal move possible because checkmate hasn't happen)
 list<Move>* MoveTree::getLegalMoves(ChessBoard* b, bool whiteTurn) {
-	int nodedeg;
+	// fix the size of the list (12 * multiplier for first move (AI4), 12 for 1st opponent, then just the best 2 or 1 for deeper moves)
+    int nodedeg;
 	if (depth == 0) {
 		nodedeg = 12 * MAX_DEGREE;
 	} else if (depth == 1) {
@@ -194,6 +205,7 @@ list<Move>* MoveTree::getLegalMoves(ChessBoard* b, bool whiteTurn) {
 	} else {
 		nodedeg = 1;
 	}
+    // get ptr to the pieces for the current player
 	Piece ** array = NULL;
 	if (whiteTurn) {
 		array = b->black;
@@ -201,17 +213,12 @@ list<Move>* MoveTree::getLegalMoves(ChessBoard* b, bool whiteTurn) {
 		array = b->white;
 	}
 	Piece *p = 0;
-	//cerr << "one" << endl;
 	list<Move> *moves = new list<Move>;
-	list<Move>::iterator minIter;
+	list<Move>::iterator minIter; //keeps track of the worst move in the list so we can replace if necessary
 	int min = 0;
-	//int random = rand() % 2;
 	for (int i = 0; i < 16; ++i) {
-		//if (random == 0) {
-			p = array[i];
-		//} else {
-		//	p = array[15-i];
-		//}
+		p = array[i];
+        // first check if the piece is valid (not captured or something)
 		if (p != 0 && p->isOnBoard()) {
 			Posn pos(0, 0);
 			int res, moveVal;
@@ -219,10 +226,10 @@ list<Move>* MoveTree::getLegalMoves(ChessBoard* b, bool whiteTurn) {
 				for (int c = 0; c < 8; c++) {
 					pos.row = r;
 					pos.col = c;
-					//if (p->canReach(pos)) {
-
+					// check if the move is valid
 					res = p->move(pos);
 					if (res >= 1) {
+                        // construct the move backward and evaluate
 						Move m;
 						m.mover = p;
 						m.captured = b->board[r][c]->getPiece();
@@ -241,13 +248,13 @@ list<Move>* MoveTree::getLegalMoves(ChessBoard* b, bool whiteTurn) {
 						}
 						m.name = ' ';
 						moveVal = evaluateMove(true,&m);
-						//cerr << "two" << endl;
+						// if list is empty, get something in there
 						if (moves->empty()) {
-							//cerr <<"A" << endl;
 							min = moveVal;
 							moves->push_back(m);
 							minIter = moves->begin();
 						} else if (moves->size() <= nodedeg) {
+                            // if list is not full, fill it
 							moves->push_back(m);
 							bool unset = true;
 							min = 0;
@@ -262,7 +269,7 @@ list<Move>* MoveTree::getLegalMoves(ChessBoard* b, bool whiteTurn) {
 								}
 							}
 						}  else if (moveVal >= min) {
-							//cerr << "B" << endl;
+							// if list is full, then replace the worst move in it if this a better move
 							moves->erase(minIter);
 							bool unset = true;
 							min = 0;
@@ -277,13 +284,11 @@ list<Move>* MoveTree::getLegalMoves(ChessBoard* b, bool whiteTurn) {
 							moves->push_back(m);
 						}
 					}
-					//}
 				}
 			}
 		}
 	}
-	//cerr << "three" << endl;
-	//cout << "size " << moves.size() << endl;
+	// this shouldn't happen (but it may)
 	if (moves->size() == 0) return NULL;
 	return moves;
 }
