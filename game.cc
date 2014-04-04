@@ -1,3 +1,4 @@
+// See game.h for class declaration
 #include "game.h"
 #include "chessboard.h"
 #include "player.h"
@@ -10,15 +11,18 @@
 #include <iostream>
 
 using namespace std;
-//
+//ctor for game, this will initialize a new chess board
+//This game object will remain for the rest of the program
 Game::Game() : board(new ChessBoard()), white(NULL), black(NULL), whitescore(0), blackscore(0), selfSetup(false) {}
 
+//dtor
 Game::~Game() {
     delete board;
     delete white;
     delete black;
 }
 
+//initialize the appropriate players (polymorphic pointers)
 void Game::initializePlayer (bool isWhite, const int humanAI) {
     if (humanAI == 0) {
         if (isWhite) {
@@ -35,25 +39,30 @@ void Game::initializePlayer (bool isWhite, const int humanAI) {
     }
 }
 
+//Start a new game and handle the alternating moves
 void Game::newGame(const int whitePlayer, const int blackPlayer) {
     initializePlayer(true, whitePlayer);
     initializePlayer(false, blackPlayer);
+    // output the board after setup mode (necessary for text, not for graphic)
     if (!selfSetup) {
         board->game();
     } else {
         cout << *board;
     }
+    // check for if it's white move
     bool whiteTurn = board->isWhiteMove();
     Player* currentPlayer;
     while (true) {
+        // switch turns
         if (whiteTurn) {
             currentPlayer = white;
         } else {
             currentPlayer = black;
         }
         int result;
+        // the human player will throw an exception if there's no more moves in stdin
+        // this allows the scoreboard to displayed in endGame() regardless of exit (normal or Ctrl-D)
         try {
-            if (currentPlayer == NULL) cout << "WTF" << endl;
             result = currentPlayer->move();
         } catch (string &s) {
             // out of moves
@@ -88,24 +97,25 @@ void Game::newGame(const int whitePlayer, const int blackPlayer) {
     }    
 }
 
+// setup mode
 void Game::setup() {
     board->setup();
     selfSetup = true;
 }
 
-
+// display score
 void Game::displayScore() {
     cout << "White Score: " << whitescore << endl;
     cout << "Black Score: " << blackscore << endl;
 }
 
-/* what does this do again? */
+/* Save feature not implemented, could add this */
 void Game::saveRecord() {
-
 }
 
 //win is 1 if white wins, 2 if black wins, 0 if draw
 void Game::endGame (int win) {
+    // this is what happens when the game end
     if (win == 1) {
         cout << "White wins" << endl;
         ++whitescore;
@@ -117,7 +127,6 @@ void Game::endGame (int win) {
     }
     displayScore();
     saveRecord();
-    // is this necessary (especially the deletion of players)?
     delete board;
     delete white;
     delete black;
@@ -125,6 +134,4 @@ void Game::endGame (int win) {
     white = black = NULL;
     selfSetup = false;
 }
-
-
 
