@@ -66,6 +66,8 @@ bool King::isCastling(const Posn posn) {
 }
                     
 void King::update(const Posn p, vector<Piece*> white, vector<Piece*> black) {
+ if (!(pos == Posn(-1, -1)) && !(pos == p)) moved = true;
+ else {
  vector<Move>* record = board->getRecord();
  bool res;
  if (record->size()) {
@@ -77,6 +79,7 @@ void King::update(const Posn p, vector<Piece*> white, vector<Piece*> black) {
   }
  }    
  moved = res;
+ }
  pos = p;
  threats = owner ? black : white;
  covers = owner ? white : black;

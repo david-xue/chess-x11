@@ -179,7 +179,7 @@ int ChessBoard::move(const Posn orig, const Posn dest, bool display, bool comput
   int res = p->move(dest);
   if (res == 0) return 0;
   else {
-   Move m = {p, cd->takeoff(display), orig, dest, false, false, 0};
+   Move m = {p, cd->takeoff(display), orig, dest, false, false, 0, p->getName()};
    co->takeoff(display);
    cd->putPiece(p, display);
   if (res == 2) {
@@ -189,7 +189,7 @@ int ChessBoard::move(const Posn orig, const Posn dest, bool display, bool comput
          board[orig.row][5]->putPiece(rook, display);
         } else {
          Piece* rook = board[orig.row][0]->takeoff(display);
-         board[orig.row][5]->putPiece(rook, display);
+         board[orig.row][3]->putPiece(rook, display);
         }
     }
    if (res == 3) {
@@ -217,7 +217,6 @@ int ChessBoard::move(const Posn orig, const Posn dest, bool display, bool comput
    if (display) {
      tp->notify(m);
      cout << *tp;
-	 int asdofijsdo = 0;
    }
    if (check(blackmove)) {
     if (checkmate(blackmove)) {
@@ -249,7 +248,6 @@ void ChessBoard::undo(bool display) {
  Cell* co = board[m.orig.row][m.orig.col];
  Cell* cd = board[m.dest.row][m.dest.col];
  cd->putPiece(m.captured, display);
- co->putPiece(m.mover, display);
  if (m.promotion) {
   Pawn* pawn = static_cast<Pawn*>(m.mover);
   pawn->unpromote();
@@ -267,6 +265,7 @@ void ChessBoard::undo(bool display) {
  if (m.enpassant) {
   board[m.orig.row][m.dest.col]->putPiece(m.enpassant, display);
  }
+ co->putPiece(m.mover, display);
  update();
  if (display) cout << *tp;
  blackmove = !blackmove;
@@ -337,7 +336,6 @@ bool ChessBoard::checkmate(bool player) {
  bool res = true;
  for (int n = 0; n < 16; n++) {
   Piece* pc = !player ? white[n] : black[n];
-  Posn p = pc->getPosn();;
   vector<Move> v = legalMove(*this, pc);
   if (!v.empty()) {
    res = false;

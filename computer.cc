@@ -10,7 +10,7 @@
 #include <time.h>
 #include "cell.h"
 #include "aitree.h"
-
+#include "opening.h"
 using namespace std;
 
 Computer::Computer (ChessBoard* b, bool isWhite, int lvl) : 
@@ -38,7 +38,7 @@ vector<Move> Computer::alllegalMove() {
  for (int n = 0; n < 16; n++) {
   vector<Move> v = legalMove(*board, own[n]);
   for (vector<Move>::iterator i = v.begin(); i != v.end(); i++) {
-   vec.push_back(*i);
+    vec.push_back(*i);
   }
  }
  return vec;
@@ -56,9 +56,12 @@ Move Computer::random(vector<Move> m) {
 
 
 int Computer::move() {
+  MoveNode opening;
+  opening.init();
+  Move m = opening.getnextMove(*(board->getRecord()));
+  if (m.orig.row < 0) {
   legalMoves = alllegalMove();
   if (legalMoves.size() == 0) return 0;
-  Move m;
   if (AILevel == 1) {
    m = random();
   }
@@ -125,7 +128,8 @@ int Computer::move() {
 	cout << "AI4 Checkmate possible" << endl;
 	AILevel = 3;
 	m = random();
-}
+  }
+ }
   int res = board->move(m.orig, m.dest, true, true);
 
   if (res == 4) return 0;

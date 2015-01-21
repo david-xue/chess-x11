@@ -17,7 +17,7 @@ class Game {
   bool selfSetup;
   void displayScore();
   void saveRecord();
-  void endGame(int);
+  void endGame(int, bool checkmate = false);
 
   void initializePlayer (bool, const int); 
  
