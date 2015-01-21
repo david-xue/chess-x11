@@ -12,17 +12,6 @@
 
 using namespace std;
 
-/* This class is a re-implementation of the Xwindow class.
- * Xwindow did not support image loading and when I tried to add additional
- * methods, the Pixmap couldn't load properly.
- * 
- * So, after reading a manual online about loading images in X11, I wrote
- * this class for image loading (the helpers are taking from web)
- *
- * Kudos to : http://neuron-ai.tuke.sk/hudecm/Tutorials/C/special/xlib-programming/xlib-programming-2.html
- */
-
-// helper for creating a simple window
 Window create_simple_window(Display* display, int width, int height, int x,
 		int y) {
 	int screen_num = DefaultScreen(display);
@@ -47,7 +36,6 @@ Window create_simple_window(Display* display, int width, int height, int x,
 	return win;
 }
 
-// helper for creating GC
 GC create_gc(Display* display, Window win, int reverse_video) {
 	GC gc; /* handle of newly created GC.  */
 	unsigned long valuemask = 0; /* which values in 'values' to  */
@@ -84,11 +72,11 @@ GC create_gc(Display* display, Window win, int reverse_video) {
 }
 
 
-//ctor (will load the images and display the initial screen)
 GraphDisplay::GraphDisplay() {
 
 	int screen_num; /* number of screen to place the window on.  */
-    char *display_name = getenv("DISPLAY"); /* address of the X display.      */
+    unsigned int display_width, display_height;
+	char *display_name = getenv("DISPLAY"); /* address of the X display.      */
 
 	/* open connection with the X server. */
 	display = XOpenDisplay(display_name);
@@ -99,8 +87,15 @@ GraphDisplay::GraphDisplay() {
 
 	/* get the geometry of the default screen for our display. */
 	screen_num = DefaultScreen(display);
-	
-    // make the new window 710x710
+	display_width = DisplayWidth(display, screen_num);
+	display_height = DisplayHeight(display, screen_num);
+
+	/* make the new window occupy 1/4 of the screen's size. */
+	//width = (display_width / 2);
+	//height = (display_height / 2);
+	//cout << "window width - " << width << "; height - " << height << endl;
+
+    // make the new window 500x500
     width = 710;
     height = 710;
 
@@ -134,9 +129,11 @@ GraphDisplay::GraphDisplay() {
         } else if (tempArray[i] != toupper(tempArray[i])) {
 			fileName = tempArray[i];
             fileName += "black" + extension;
-	    } else {
+			//fileName = "testingblack.xbm";
+		} else {
 			fileName = tempArray[i];
             fileName += "white" + extension;
+			//fileName = "testingwhite.xbm";
 		}
 
 		/* this variable will contain the ID of the newly created pixmap.    */
@@ -152,7 +149,6 @@ GraphDisplay::GraphDisplay() {
 		/* variable.                                                         */
         int rc;
 
-        // This section load all images (there are 16 of them, 12 for chess pieces, 1 for blank square, 2 for axis, 1 for background)
         if ((fileName != "xaxis.xbm") && (fileName != "yaxis.xbm") && (fileName != "background.xbm")) {
 		    rc = XReadBitmapFile(display, win, fileName.c_str(),
 				&bitmap_width, &bitmap_height, bitmap, &hotspot_x, &hotspot_y);
@@ -170,7 +166,7 @@ GraphDisplay::GraphDisplay() {
             rc = XReadBitmapFile(display, win, fileName.c_str(),
                     &width, &height, bitmap, &hotspot_x, &hotspot_y);
         }
-        // error checking for image loading
+
 		switch (rc) {
 		case BitmapOpenFailed:
 			cerr << "XReadBitmapFile - could not open file: " << fileName << endl;
@@ -187,21 +183,19 @@ GraphDisplay::GraphDisplay() {
 		}
 
         XSync(display,false);
-        
+        //usleep(1);        
 	}
-    // draws the background
      XCopyPlane(display, *bg, win, gc, 0, 0, width,
                 height, 0, 0, 1);
     XSync(display, False);
 
-    // draws the axes
+
     XCopyPlane(display, *xaxis, win, gc, 0, 0, axis_width,
-				axis_height, 60, 0, 1);
+				axis_height, 30, 0, 1);
 	XSync(display, False);
     XCopyPlane(display, *yaxis, win, gc, 0, 0, axis_height,
-                axis_width, 0, 60, 1);
+                axis_width, 0, 30, 1);
     XSync(display, False);
-    // draws a blank chess board
     for (int i = 0; i < 8; ++i) {
         for (int j = 0; j < 8; ++j) {
             undraw(Posn(i,j));
@@ -218,7 +212,6 @@ GraphDisplay::~GraphDisplay() {
 
 	/* close the connection to the X server. */
 
-    /* Frees all the images loaded in to the program to prevent memory leaks */
     map<char,Pixmap*>::iterator iter;
     for (iter = imageMap.begin(); iter != imageMap.end(); ++iter) {
         XFreePixmap(display,*(iter->second));
@@ -234,7 +227,6 @@ GraphDisplay::~GraphDisplay() {
     XCloseDisplay(display);
 }
 
-/* Draws the appropriate piece image at the position specified by pos */
 void GraphDisplay::draw (char piece, Posn pos) { 
 	int y = pos.row * (bitmap_height+5) + 40;
 	int x = pos.col * (bitmap_width+5) + 40;
@@ -242,12 +234,12 @@ void GraphDisplay::draw (char piece, Posn pos) {
 		XCopyPlane(display, *(imageMap.at(piece)), win, gc, 0, 0, bitmap_width,
 				bitmap_height, x, y, 1);
 		XSync(display, false);
+		//usleep(4);
 	} catch (const out_of_range& except) {
 		cerr << "out of range error: " << except.what() << endl;
 	}
 }
 
-/* Draws a blank square at Posn pos */
 void GraphDisplay::undraw(Posn pos) {
     int y = pos.row * (bitmap_height+5) + 40;
 	int x = pos.col * (bitmap_width+5) + 40;
@@ -258,5 +250,11 @@ void GraphDisplay::undraw(Posn pos) {
 		XSync(display, False);
 	} catch (const out_of_range& except) {
 		cerr << "out of range error: " << except.what() << endl;
-	} 
+	}
+    
+    
+    
+    //   int y = pos.row * 40;
+   // int x = pos.col * 40;
+//    xwindow->fillRectangle(x, y, 40, 40, Xwindow::White); //draw a white rectangle in place
 }

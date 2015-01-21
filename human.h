@@ -3,7 +3,6 @@
 #include "player.h"
 #include <string>
 
-// This class allows the Human Player to input moves
 class Human: public Player {
     int readLine(std::string);
     public:

@@ -3,12 +3,6 @@
 #include <X11/Xlib.h>
 #include <map>
 
-/* This class is a new version of the Xwindow class with support for loaded images.
- * The original window.cc does not appear to work when I added image loading mechanisms,
- * so I rewrote it. */
-
-// See graphdisplay.cc for implementation
-
 class Posn;
 
 class GraphDisplay {

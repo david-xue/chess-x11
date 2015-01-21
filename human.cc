@@ -8,16 +8,11 @@
 #include <string>
 #include <vector>
 
-// This class implements the Human Player.
-// See human.h for declarations.
-
 using namespace std;
 
-// ctor
 Human::Human(ChessBoard* b, bool isWhite) : Player(b, isWhite) {}
 
-// Continues to read in moves until a legal one is reached
-// returns 0 if draw, 1 if legal non ending move, 2 if resign, 3 if checkmate
+//0 if draw, 1 if legal non ending move, 2 if resign, 3 if checkmate
 int Human::move() {
     try {
     string s;
@@ -38,13 +33,12 @@ int Human::move() {
     string err = "out of moves";
     throw err;
     } catch (string &s) {
-    // throw an exception (which will be caught by its caller in Game) when stdin is exhausted
+    //what to do if moves run out?
     throw;
     }
 }
 
-// Read in a move and execute it on chessboard
-// returns 0 if illegal, 1 if legal non ending move, 2 if resign, 3 if checkmate, 4 if draw, 5 if undo
+// 0 if illegal, 1 if legal non ending move, 2 if resign, 3 if checkmate, 4 if draw, 5 if undo
 int Human::readLine(string s) {
     istringstream ss(s);
     string cmd, cmd2, cmd3;
