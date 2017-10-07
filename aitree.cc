@@ -42,7 +42,7 @@ MoveTree::MoveTree(ChessBoard* b, int upperval, bool whiteTurn, Move* mp, bool o
 		}
 	}
 	
-	tree = {};
+	tree.clear();
     // check if this is the owner's turn (for root node, this doesn't mean anything)
 	ownerTurn = (whiteTurn == owner);
 	val = 0;

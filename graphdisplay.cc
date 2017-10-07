@@ -48,7 +48,7 @@ GC create_gc(Display* display, Window win, int reverse_video) {
 	int screen_num = DefaultScreen(display);
 
 	gc = XCreateGC(display, win, valuemask, &values);
-	if (gc < 0) {
+	if (!gc) {
 		cerr << "XCreateGC:" << endl;
 	}
 
